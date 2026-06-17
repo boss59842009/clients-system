@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<main class="dashboard-content">
+    <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="page-heading">
+            <div class="page-heading-copy">
+                <span class="page-icon"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></span>
+                <div>
+                    <h1 class="h3 mb-1">Інформація про клієнта</h1>
+                    <p class="text-muted mb-0">Inspect account status, profile data, permissions, and recent
+                        activity.</p>
+                </div>
+            </div>
+            <div class="heading-actions">
+                <a class="btn btn-outline-secondary btn" href="{% url "clients-list" %}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                Назад до клієнтів</a>
+            </div>
+        </div>
+
+        <section class="row g-3">
+            <div class="col-12 col-xl-4">
+                <div class="panel h-100 text-center profile-card">
+                    <div class="profile-hero d-flex flex-column align-items-center text-center">
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            <h2 class="h2 mb-1">{{ client.last_name }} {{ client.first_name }}</h2>                    
+                            {% if client.is_active %}
+                                <span class="badge text-bg-success mb-3">✔ Активний</span>
+                            {% else %}
+                                <span class="badge text-bg-danger mb-3">✖ Неактивний</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            <button class="btn btn-warning btn-sm" type="button">Змінити</button>
+                            <button class="btn btn-danger btn-sm" type="button">Видалити</button>
+                        </div>
+                    
+                    </div>
+                    <div class="info-list mt-4 text-start">
+                        <div><span>Номер телефону</span><strong>{{ client.phone_number }}</strong></div>
+                        <div><span>Телеграм</span><strong></strong>
+                            {% if client.tg %}@{{ client.tg }}{% else %}-{% endif %}
+                        </div>
+                        <div><span>Стать</span><strong>{{ client.get_gender_display }}</strong></div>
+                        <div><span>Дата народження</span><strong>{{ client.birthdate|date:"d.m.Y" }}</strong></div>
+                        <div><span>Вік</span><strong></strong></div>
+                        <div><span>Оновлено</span><strong>{{ client.updated_at|date:"d.m.Y" }}</strong></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-8">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="h5 mb-1 section-title"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Останні записи</span></h2>
+                        </div>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item"><span class="activity-dot bg-primary"></span>
+                            <div><p class="mb-1 fw-semibold">Updated billing permissions</p>
+                                <p class="text-muted small mb-0">2 hours ago</p></div>
+                        </div>
+                        <div class="activity-item"><span class="activity-dot bg-success"></span>
+                            <div><p class="mb-1 fw-semibold">Approved new teammate</p>
+                                <p class="text-muted small mb-0">Yesterday</p></div>
+                        </div>
+                        <div class="activity-item"><span class="activity-dot bg-warning"></span>
+                            <div><p class="mb-1 fw-semibold">Changed password</p>
+                                <p class="text-muted small mb-0">Apr 30, 2026</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}
