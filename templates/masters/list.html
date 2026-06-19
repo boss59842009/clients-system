@@ -18,70 +18,12 @@
             </div>
         </div>
 
-        <section class="row g-3 mt-1" aria-label="User summary">
-            <div class="col-12 col-sm-6 col-xl-3">
-                <article class="metric-card metric-primary">
-                    <div class="metric-top">
-                        <span class="metric-label">Всього клієнтів</span>
-                        <span class="metric-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
-                    </div>
-                    <div class="metric-value">{{ clients_count }}</div>
-                    <div class="metric-meta">
-                        <span class="text-success">+5.1%</span>
-                        <span>this month</span>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <article class="metric-card metric-success">
-                    <div class="metric-top">
-                        <span class="metric-label">Активні</span>
-                        <span class="metric-icon"><i class="bi bi-check2-circle" aria-hidden="true"></i></span>
-                    </div>
-                    <div class="metric-value">{{ active_clients_count }}</div>
-                    <div class="metric-meta">
-                        <span class="text-success">91%</span>
-                        <span>healthy accounts</span>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <article class="metric-card metric-warning">
-                    <div class="metric-top">
-                        <span class="metric-label">Pending</span>
-                        <span class="metric-icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
-                    </div>
-                    <div class="metric-value">184</div>
-                    <div class="metric-meta">
-                        <span class="text-warning">12</span>
-                        <span>need approval</span>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <article class="metric-card metric-danger">
-                    <div class="metric-top">
-                        <span class="metric-label">Suspended</span>
-                        <span class="metric-icon"><i class="bi bi-slash-circle" aria-hidden="true"></i></span>
-                    </div>
-                    <div class="metric-value">38</div>
-                    <div class="metric-meta">
-                        <span class="text-danger">4</span>
-                        <span>flagged today</span>
-                    </div>
-                </article>
-            </div>
-        </section>
-
         <section class="panel mt-3">
             <div class="panel-header">
                 <div>
                     <h2 class="h5 mb-1 section-title"><i class="bi bi-table"
-                                                         aria-hidden="true"></i><span>Список клієнтів</span></h2>
-                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте обліковими записами клієнтів.</p>
+                                                         aria-hidden="true"></i><span>Список майстрів</span></h2>
+                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте обліковими записами майстрів.</p>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-nowrap">
                     <form method="GET" class="d-flex align-items-center gap-2 flex-nowrap">
@@ -98,12 +40,12 @@
                         Експорт
                     </a>
                     <a class="btn btn-success btn text-nowrap"
-                        hx-get="{% url 'clients-create' %}"
+                        hx-get="{% url 'master-create' %}"
                         hx-target="#createModalBody"
                         hx-trigger="click"
                         data-bs-toggle="modal"
-                        data-bs-target="#createClientModal">
-                        <i class="bi bi-person-plus" aria-hidden="true"></i>Створити клієнта
+                        data-bs-target="#createMasterModal">
+                        <i class="bi bi-person-plus" aria-hidden="true"></i>Створити майстра
                     </a>
                 </div>
             </div>
@@ -114,50 +56,44 @@
                         <th scope="col">Прізвище</th>
                         <th scope="col">Імʼя</th>
                         <th scope="col">Номер телефону</th>
-                        <th scope="col">Телеграм</th>
-                        <th scope="col">Стать</th>
-                        <th scope="col">Дата народження</th>
                         <th scope="col">Статус</th>
                         <th scope="col">Створено</th>
                         <th scope="col">Дії</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for client in clients %}
+                    {% for master in masters %}
                     <tr>
-                        <td>{{ client.last_name }}</td>
-                        <td>{{ client.first_name }}</td>
-                        <td>{{ client.phone_number }}</td>
-                        <td>@{{ client.tg }}</td>
-                        <td>{{ client.get_gender_display }}</td>
-                        <td>{{ client.birthdate|date:"d.m.Y" }}</td>
+                        <td>{{ master.last_name }}</td>
+                        <td>{{ master.first_name }}</td>
+                        <td>{{ master.phone_number }}</td>
                         <td>
-                            {% if client.is_active %}
+                            {% if master.is_active %}
                             <span class="badge text-bg-success">✔ Активний</span>
                             {% else %}
                             <span class="badge text-bg-danger">✖ Неактивний</span>
                             {% endif %}
                         </td>
-                        <td>{{ client.created_at|date:"d.m.Y" }}</td>
+                        <td>{{ master.created_at|date:"d.m.Y" }}</td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary me-1" href="{% url "clients-detail" client.pk %}">
+                            <a class="btn btn-sm btn-outline-primary me-1" href="{% url "master-detail" master.pk %}">
                                 <i class="bi bi-eye">
                                 </i>
                             </a>
                             <button class="btn btn-sm btn-outline-warning me-1"
-                                    hx-get="{% url 'clients-update' client.pk %}"
+                                    hx-get="{% url 'master-update' master.pk %}"
                                     hx-target="#updateModalBody"
                                     hx-trigger="click"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#updateClientModal">
+                                    data-bs-target="#updateMasterModal">
                                 <i class="bi bi-pencil-square"></i>
                             </button> 
                             <button class="btn btn-sm btn-outline-danger"
-                                    hx-get="{% url 'clients-delete' client.pk %}"
+                                    hx-get="{% url 'master-delete' master.pk %}"
                                     hx-target="#deleteModalBody"
                                     hx-swap="innerHTML"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#deleteClientModal">
+                                    data-bs-target="#deleteMasterModal">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -241,8 +177,8 @@
         </section>
     </div>
 </main>
-<!-- CREATE CLIENT MODAL -->
-<div class="modal fade" id="createClientModal" tabindex="-1">
+<!-- CREATE master MODAL -->
+<div class="modal fade" id="createMasterModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
@@ -262,8 +198,8 @@
         </div>
     </div>
 </div>
-<!--UPDATE CLIENT MODAL-->
-<div class="modal fade" id="updateClientModal" tabindex="-1">
+<!--UPDATE master MODAL-->
+<div class="modal fade" id="updateMasterModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
@@ -282,8 +218,8 @@
         </div>
     </div>
 </div>
-<!--DELETE CLIENT MODAL-->
-<div class="modal fade" id="deleteClientModal" tabindex="-1">
+<!--DELETE master MODAL-->
+<div class="modal fade" id="deleteMasterModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

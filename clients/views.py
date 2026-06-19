@@ -1,38 +1,35 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import CreateClientForm
+from .forms import ClientForm
 from .models import ClientModel
 
 
 def clients_list_view(request):
-    create_client_form = CreateClientForm()
-
-    if request.method == "POST":
-        create_client_form = CreateClientForm(request.POST)
-        if create_client_form.is_valid():
-            create_client_form.save()
-            messages.success(request, "Клієнта успішно створено.")
-            request.session["open_create_modal"] = True  # або ?created=1 в redirect
-            return redirect("clients-list")  # PRG — без повторного POST при F5
-
-    open_create_modal = request.session.pop("open_create_modal", False) or (
-        request.method == "POST" and not create_client_form.is_valid()
-    )
-    # після success — чиста форма
-    if open_create_modal and request.method == "GET":
-        create_client_form = CreateClientForm()
-
+    q = request.GET.get("q", "").strip()
     clients_qs = ClientModel.objects.all().order_by("-id")
+    if q:
+        clients_qs = clients_qs.filter(
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(phone_number__icontains=q) |
+            Q(tg__icontains=q)
+        )
+
+    clients_count = clients_qs.count()
+    active_clients_count = ClientModel.objects.filter(is_active=True).count()
+    
     paginator = Paginator(clients_qs, 10)
     page_obj = paginator.get_page(request.GET.get("page"))
 
     return render(request, "clients/list.html", {
         "clients": page_obj,
         "page_obj": page_obj,
-        "create_client_form": create_client_form,
-        "open_create_modal": open_create_modal,
+        "clients_count": clients_count,
+        "active_clients_count": active_clients_count,
     })
 
 def clients_detail_view(request, pk):
@@ -44,13 +41,54 @@ def clients_detail_view(request, pk):
 
     return render(request, "clients/detail.html", context)
 
-def clients_update_view(request, id):
-    pass
+def client_create_view(request):
+    if request.method == "POST":
+        create_client_form = ClientForm(request.POST)
+
+        if create_client_form.is_valid():
+            create_client_form.save()
+            create_client_form = ClientForm()
+            return render(request, "clients/partials/create_client_modal.html", {
+                "create_client_form": create_client_form,
+                "success": True
+            })
+    else:
+        create_client_form = ClientForm()
+
+    return render(request, "clients/partials/create_client_modal.html", {
+        "create_client_form": create_client_form
+    })
+
+def clients_update_view(request, pk):
+    client = get_object_or_404(ClientModel, pk=pk)
+
+    if request.method == "POST":
+        update_client_form = ClientForm(request.POST, instance=client)
+        if update_client_form.is_valid():
+            update_client_form.save()
+            response = HttpResponse()
+            response["HX-Redirect"] = "/clients/"
+
+            return response
+    else:
+        update_client_form = ClientForm(instance=client)
+
+    return render(request, "clients/partials/update_client_modal.html", {
+        "update_client_form": update_client_form,
+        "client": client
+    })
 
 
 def clients_delete_view(request, pk):
-    if request.method == "POST":
-        client = get_object_or_404(ClientModel, pk=pk)
-        client.delete()
+    client = get_object_or_404(ClientModel, pk=pk)
 
-    return redirect("clients-list")
+    if request.method == "POST":
+        client.delete()
+        response = HttpResponse()
+        response["HX-Redirect"] = "/clients/"
+
+        return response
+
+    return render(request, "clients/partials/delete_client_modal.html", {
+        "client": client
+    })

@@ -229,12 +229,11 @@ function initSidebar() {
     media.addListener(handleBreakpoint);
   }
 }
-
 /* ---------------- INIT ---------------- */
 
 ready(() => {
   initValidation();
-  initTableSearch();
+  // initTableSearch();
   initTheme();
 //  initUserProfile();
   initSidebar();

@@ -1,0 +1,36 @@
+{% load crispy_forms_tags %}
+
+<p>
+  Ви впевнені, що хочете видалити:
+  <strong>{{ client.first_name }} {{ client.last_name }}</strong>?
+</p>
+<form
+  method="POST"
+  hx-post="{% url 'clients-delete' client.pk %}"
+  hx-trigger="submit"
+  hx-swap="none"
+>
+  {% csrf_token %}
+  <div class="modal-footer pb-0">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      data-bs-dismiss="modal"
+    >
+      Скасувати
+    </button>
+
+    <button type="submit" class="btn btn-danger">Видалити</button>
+  </div>
+</form>
+
+<script>
+    document.body.addEventListener("client-deleted", () => {
+        const modalEl = document.getElementById("deleteClientModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+    
+        modal.hide();
+    
+        document.activeElement?.blur();
+    });
+</script>
