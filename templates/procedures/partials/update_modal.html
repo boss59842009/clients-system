@@ -1,0 +1,24 @@
+{% load crispy_forms_tags %}
+
+<form method="POST"
+      action="{% url 'procedure-update' procedure.pk %}"
+      hx-post="{% url 'procedure-update' procedure.pk %}"
+      hx-target="#updateModalBody"
+      hx-swap="innerHTML">
+
+    {% csrf_token %}
+
+    {{ update_procedure_form|crispy }}
+
+    <div class="modal-footer pb-0">
+        <button type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal">
+            Скасувати
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+            Зберегти
+        </button>
+    </div>
+</form>

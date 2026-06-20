@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<main class="dashboard-content">
+    <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="page-heading">
+            <div class="page-heading-copy">
+                <span class="page-icon"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></span>
+                <div>
+                    <h1 class="h3 mb-1">Інформація про послугу</h1>
+                    <p class="text-muted mb-0">Inspect account status, profile data, permissions, and recent
+                        activity.</p>
+                </div>
+            </div>
+            <div class="heading-actions">
+                <a class="btn btn-outline-secondary btn" href="{% url "masters-list" %}">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                Назад до послуг</a>
+            </div>
+        </div>
+
+        <section class="row g-3">
+            <div class="col-12 col-xl-4">
+                <div class="panel h-100 text-center profile-card">
+                    <div class="profile-hero d-flex flex-column align-items-center text-center">
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            <h2 class="h2 mb-1">{{ procedure.title }}</h2>
+                            {% if procedure.is_active %}
+                            <span class="badge text-bg-success mb-3">✔ Активна</span>
+                            {% else %}
+                            <span class="badge text-bg-danger mb-3">✖ Неактивна</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            <button class="btn btn-sm btn-outline-warning me-1"
+                                    hx-get="{% url 'procedure-update' procedure.pk %}"
+                                    hx-target="#updateModalBody"
+                                    hx-trigger="click"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#updateProcedureModal">
+                                Змінити
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm"
+                                    hx-get="{% url 'procedure-delete' procedure.pk %}"
+                                    hx-target="#deleteModalBody"
+                                    hx-swap="innerHTML"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteProcedureModal">
+                                Видалити
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="info-list mt-4 text-start">
+                        <div><span>Опис</span><strong>{{ procedure.description }}</strong></div>
+                        <div><span>Ціна</span><strong>{{ procedure.price }} ₴</strong></div>
+                        <div><span>Тривалість</span><strong>{{ procedure.duration }} хв</strong></div>
+                        <div><span>Оновлено</span><strong>{{ procedure.updated_at|date:"d.m.Y" }}</strong></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-8">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="h5 mb-1 section-title"><i class="bi bi-clock-history"
+                                                                 aria-hidden="true"></i><span>Майстри цієї послуги</span>
+                            </h2>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-success me-1">Додати майстра</button>
+                        </div>
+                    </div>
+                    <div class="activity-list">
+                        {% for master in masters %}
+                        <div class="activity-item d-flex align-items-start justify-content-between">
+
+                            <div class="d-flex align-items-start">
+                                <span class="activity-dot bg-primary me-2"></span>
+
+                                <div>
+                                    <p class="mb-1 fw-semibold">{{ master.last_name }} {{ master.first_name }}</p>
+                                    <p class="text-muted small mb-0">{{ master.phone_number }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+<!--UPDATE PROCEDURE MODAL-->
+<div class="modal fade" id="updateProcedureModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Редагувати послугу</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body"
+                 id="updateModalBody">
+                <!-- HTMX сюди вставить форму -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--DELETE PROCEDURE MODAL-->
+<div class="modal fade" id="deleteProcedureModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Підтвердити видалення</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                <!-- HTMX сюди вставить форму -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

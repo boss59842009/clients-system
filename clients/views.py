@@ -1,13 +1,13 @@
-from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 from .forms import ClientForm
 from .models import ClientModel
 
-
+@login_required
 def clients_list_view(request):
     q = request.GET.get("q", "").strip()
     clients_qs = ClientModel.objects.all().order_by("-id")
@@ -32,6 +32,7 @@ def clients_list_view(request):
         "active_clients_count": active_clients_count,
     })
 
+@login_required
 def clients_detail_view(request, pk):
     client = get_object_or_404(ClientModel, pk=pk)
 
@@ -41,6 +42,7 @@ def clients_detail_view(request, pk):
 
     return render(request, "clients/detail.html", context)
 
+@login_required
 def client_create_view(request):
     if request.method == "POST":
         create_client_form = ClientForm(request.POST)
@@ -59,6 +61,7 @@ def client_create_view(request):
         "create_client_form": create_client_form
     })
 
+@login_required
 def clients_update_view(request, pk):
     client = get_object_or_404(ClientModel, pk=pk)
 
@@ -78,7 +81,7 @@ def clients_update_view(request, pk):
         "client": client
     })
 
-
+@login_required
 def clients_delete_view(request, pk):
     client = get_object_or_404(ClientModel, pk=pk)
 

@@ -8,9 +8,9 @@
             <div class="page-heading-copy">
                 <span class="page-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
                 <div>
-                    <p class="eyebrow mb-1">Management</p>
-                    <h1 class="h3 mb-1">Майстри</h1>
-                    <p class="text-muted mb-0">Review accounts, roles, account status, and team ownership.</p>
+                    <p class="eyebrow mb-1">Упарвління</p>
+                    <h1 class="h3 mb-1">Послуги</h1>
+                    <p class="text-muted mb-0">Управління послугами</p>
                 </div>
             </div>
             <div class="heading-actions">
@@ -22,8 +22,8 @@
             <div class="panel-header">
                 <div>
                     <h2 class="h5 mb-1 section-title"><i class="bi bi-table"
-                                                         aria-hidden="true"></i><span>Список майстрів</span></h2>
-                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте обліковими записами майстрів.</p>
+                                                         aria-hidden="true"></i><span>Список послуг</span></h2>
+                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте послугами</p>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-nowrap">
                     <form method="GET" class="d-flex align-items-center gap-2 flex-nowrap">
@@ -40,12 +40,12 @@
                         Експорт
                     </a>
                     <a class="btn btn-success btn text-nowrap"
-                        hx-get="{% url 'master-create' %}"
+                        hx-get="{% url 'procedure-create' %}"
                         hx-target="#createModalBody"
                         hx-trigger="click"
                         data-bs-toggle="modal"
-                        data-bs-target="#createMasterModal">
-                        <i class="bi bi-person-plus" aria-hidden="true"></i>Створити майстра
+                        data-bs-target="#createProcedureModal">
+                        <i class="bi bi-person-plus" aria-hidden="true"></i>Створити послугу
                     </a>
                 </div>
             </div>
@@ -53,47 +53,49 @@
                 <table class="table align-middle mb-0" id="usersTable" data-searchable-table>
                     <thead>
                     <tr class=" fw-bold">
-                        <th scope="col">Прізвище</th>
-                        <th scope="col">Імʼя</th>
-                        <th scope="col">Номер телефону</th>
+                        <th scope="col">Назва</th>
+                        <th scope="col">Опис</th>
                         <th scope="col">Статус</th>
+                        <th scope="col">Ціна</th>
+                        <th scope="col">Тривалість</th>
                         <th scope="col">Створено</th>
                         <th scope="col">Дії</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for master in masters %}
+                    {% for procedure in procedures %}
                     <tr>
-                        <td>{{ master.last_name }}</td>
-                        <td>{{ master.first_name }}</td>
-                        <td>{{ master.phone_number }}</td>
+                        <td>{{ procedure.title }}</td>
+                        <td>{{ procedure.description }}</td>
                         <td>
-                            {% if master.is_active %}
+                            {% if procedure.is_active %}
                             <span class="badge text-bg-success">✔ Активний</span>
                             {% else %}
                             <span class="badge text-bg-danger">✖ Неактивний</span>
                             {% endif %}
                         </td>
-                        <td>{{ master.created_at|date:"d.m.Y" }}</td>
+                        <td>{{ procedure.price }} ₴</td>
+                        <td>{{ procedure.duration }} хв</td>
+                        <td>{{ procedure.created_at|date:"d.m.Y" }}</td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary me-1" href="{% url "master-detail" master.pk %}">
+                            <a class="btn btn-sm btn-outline-primary me-1" href="{% url "procedure-detail" procedure.pk %}">
                                 <i class="bi bi-eye">
                                 </i>
                             </a>
                             <button class="btn btn-sm btn-outline-warning me-1"
-                                    hx-get="{% url 'master-update' master.pk %}"
+                                    hx-get="{% url 'procedure-update' procedure.pk %}"
                                     hx-target="#updateModalBody"
                                     hx-trigger="click"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#updateMasterModal">
+                                    data-bs-target="#updateProcedureModal">
                                 <i class="bi bi-pencil-square"></i>
                             </button> 
                             <button class="btn btn-sm btn-outline-danger"
-                                    hx-get="{% url 'master-delete' master.pk %}"
+                                    hx-get="{% url 'procedure-delete' procedure.pk %}"
                                     hx-target="#deleteModalBody"
                                     hx-swap="innerHTML"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#deleteMasterModal">
+                                    data-bs-target="#deleteProcedureModal">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -177,13 +179,13 @@
         </section>
     </div>
 </main>
-<!-- CREATE master MODAL -->
-<div class="modal fade" id="createMasterModal" tabindex="-1">
+<!-- CREATE procedure MODAL -->
+<div class="modal fade" id="createProcedureModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h2 class="modal-title h5">Створити клієнта</h2>
+                <h2 class="modal-title h5">Створити послугу</h2>
 
                 <button type="button"
                         class="btn-close"
@@ -198,13 +200,13 @@
         </div>
     </div>
 </div>
-<!--UPDATE master MODAL-->
-<div class="modal fade" id="updateMasterModal" tabindex="-1">
+<!--UPDATE procedure MODAL-->
+<div class="modal fade" id="updateProcedureModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Редагувати клієнта</h5>
+                <h5 class="modal-title">Редагувати послугу</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"></button>
@@ -218,8 +220,8 @@
         </div>
     </div>
 </div>
-<!--DELETE master MODAL-->
-<div class="modal fade" id="deleteMasterModal" tabindex="-1">
+<!--DELETE procedure MODAL-->
+<div class="modal fade" id="deleteProcedureModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

@@ -1,6 +1,6 @@
 import re
 from django import forms
-from procedures.models import MasterModel
+from procedures.models import MasterModel, ProcedureModel
 
 
 class MasterForm(forms.ModelForm):
@@ -28,3 +28,16 @@ class MasterForm(forms.ModelForm):
             raise forms.ValidationError("Невірний формат номеру телефону")
 
         return phone
+
+class ProcedureForm(forms.ModelForm):
+    class Meta:
+        model = ProcedureModel
+        fields = "__all__"
+        exclude = ["is_active"]
+
+        widgets = {
+            "title": forms.TextInput(attrs={"placeholder": "Назва"}),
+            "description": forms.Textarea(attrs={"placeholder": "Опис"}),
+            "price": forms.NumberInput(attrs={"placeholder": "Ціна в ₴" }),
+            "duration": forms.NumberInput(attrs={"placeholder": "Тривалість в зв" }),
+        }

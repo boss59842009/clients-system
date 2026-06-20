@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
 from .forms import PhoneAuthenticationForm, UserRegistrationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def index_view(request):
     return render(request, "index.html")
 
@@ -21,7 +22,6 @@ def register(request):
     else:
         register_form = UserRegistrationForm()
         return render(request, "auth_system/register.html", context={"register_form": register_form})
-
 
 def login_view(request):
     if request.method == "POST":
@@ -45,7 +45,6 @@ def login_view(request):
     return render(request, "auth_system/login.html", {
         "login_form": login_form
     })
-
 
 def logout_view(request):
     logout(request)

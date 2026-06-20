@@ -39,4 +39,7 @@ class PhoneAuthenticationForm(AuthenticationForm):
         })
     )
 
-    remember_me = forms.BooleanField(required=False)
+    remember_me = forms.BooleanField(
+        required=False,
+        label="Запамʼятати мене"
+        )

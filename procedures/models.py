@@ -37,7 +37,7 @@ class MasterModel(models.Model):
 
 class MasterProcedureModel(models.Model):
     master = models.ForeignKey(MasterModel, on_delete=models.CASCADE)
-    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE)
+    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE, related_name="procedures")
 
     class Meta:
         verbose_name = 'МайстерПроцедура'

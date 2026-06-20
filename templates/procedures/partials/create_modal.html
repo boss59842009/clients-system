@@ -1,0 +1,47 @@
+{% load crispy_forms_tags %} 
+
+{% if success %}
+<div class="alert alert-success auto-hide-alert mb-3" data-hide-after="3000">
+  Послугу успішно створено
+</div>
+{% endif %}
+
+<form
+  method="POST"
+  hx-post="{% url 'procedure-create' %}"
+  hx-target="#createModalBody"
+  hx-swap="innerHTML"
+  hx-on="htmx:afterRequest: window.dispatchEvent(new Event('rocedure-created'))"
+>
+  {% csrf_token %} 
+  {{ create_procedure_form|crispy }}
+
+  <div class="modal-footer pb-0">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      data-bs-dismiss="modal"
+    >
+      Відмінити
+    </button>
+
+    <button type="submit" class="btn btn-primary">Створити</button>
+  </div>
+</form>
+
+<script>
+  document.body.addEventListener("htmx:afterSwap", (event) => {
+    document.querySelectorAll(".auto-hide-alert").forEach((el) => {
+      if (el.dataset.timerSet) return; // щоб не дублювати таймер
+      el.style.transition = "opacity 300ms ease";
+      el.dataset.timerSet = "1";
+
+      const timeout = parseInt(el.dataset.hideAfter || "3000", 10);
+
+      setTimeout(() => {
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 300);
+      }, timeout);
+    });
+  });
+</script>
