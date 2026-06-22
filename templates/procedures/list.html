@@ -8,7 +8,7 @@
             <div class="page-heading-copy">
                 <span class="page-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
                 <div>
-                    <p class="eyebrow mb-1">Упарвління</p>
+                    <p class="eyebrow mb-1">Управління</p>
                     <h1 class="h3 mb-1">Послуги</h1>
                     <p class="text-muted mb-0">Управління послугами</p>
                 </div>
@@ -54,8 +54,6 @@
                     <thead>
                     <tr class=" fw-bold">
                         <th scope="col">Назва</th>
-                        <th scope="col">Опис</th>
-                        <th scope="col">Статус</th>
                         <th scope="col">Ціна</th>
                         <th scope="col">Тривалість</th>
                         <th scope="col">Створено</th>
@@ -66,16 +64,8 @@
                     {% for procedure in procedures %}
                     <tr>
                         <td>{{ procedure.title }}</td>
-                        <td>{{ procedure.description }}</td>
-                        <td>
-                            {% if procedure.is_active %}
-                            <span class="badge text-bg-success">✔ Активний</span>
-                            {% else %}
-                            <span class="badge text-bg-danger">✖ Неактивний</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ procedure.price }} ₴</td>
-                        <td>{{ procedure.duration }} хв</td>
+                        <td><span class="badge text-bg-success">{{ procedure.price }} ₴</span></td>
+                        <td><span class="badge text-bg-secondary">{{ procedure.duration }} хв</span></td>
                         <td>{{ procedure.created_at|date:"d.m.Y" }}</td>
                         <td>
                             <a class="btn btn-sm btn-outline-primary me-1" href="{% url "procedure-detail" procedure.pk %}">

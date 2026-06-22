@@ -1,7 +1,7 @@
 from django.db import models
 
 class ProcedureModel(models.Model):
-    title = models.CharField(max_length=70, verbose_name='Назва')
+    title = models.CharField(max_length=100, verbose_name='Назва')
     description = models.TextField(verbose_name='Опис')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Ціна')
     duration = models.PositiveIntegerField(verbose_name='Тривалість')
@@ -36,8 +36,11 @@ class MasterModel(models.Model):
         ordering = ('-created_at',)
 
 class MasterProcedureModel(models.Model):
-    master = models.ForeignKey(MasterModel, on_delete=models.CASCADE)
-    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE, related_name="procedures")
+    master = models.ForeignKey(MasterModel, on_delete=models.CASCADE, related_name="master_procedures")
+    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE, related_name="procedure_masters")
+
+    def __str__(self):
+        return f"{self.master.last_name} - {self.procedure.title}"
 
     class Meta:
         verbose_name = 'МайстерПроцедура'

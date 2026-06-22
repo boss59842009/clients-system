@@ -9,8 +9,6 @@
                 <span class="page-icon"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></span>
                 <div>
                     <h1 class="h3 mb-1">Інформація про послугу</h1>
-                    <p class="text-muted mb-0">Inspect account status, profile data, permissions, and recent
-                        activity.</p>
                 </div>
             </div>
             <div class="heading-actions">
@@ -26,11 +24,6 @@
                     <div class="profile-hero d-flex flex-column align-items-center text-center">
                         <div class="d-flex justify-content-center gap-2 mt-2">
                             <h2 class="h2 mb-1">{{ procedure.title }}</h2>
-                            {% if procedure.is_active %}
-                            <span class="badge text-bg-success mb-3">✔ Активна</span>
-                            {% else %}
-                            <span class="badge text-bg-danger mb-3">✖ Неактивна</span>
-                            {% endif %}
                         </div>
 
                         <div class="d-flex justify-content-center gap-2 mt-2">
@@ -55,8 +48,8 @@
                     </div>
                     <div class="info-list mt-4 text-start">
                         <div><span>Опис</span><strong>{{ procedure.description }}</strong></div>
-                        <div><span>Ціна</span><strong>{{ procedure.price }} ₴</strong></div>
-                        <div><span>Тривалість</span><strong>{{ procedure.duration }} хв</strong></div>
+                        <div><span>Ціна</span><strong><span class="badge text-bg-success">{{ procedure.price }} ₴</span></strong></div>
+                        <div><span>Тривалість</span><strong><span class="badge text-bg-secondary">{{ procedure.duration }} хв</span></strong></div>
                         <div><span>Оновлено</span><strong>{{ procedure.updated_at|date:"d.m.Y" }}</strong></div>
                     </div>
                 </div>

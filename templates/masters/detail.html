@@ -9,8 +9,6 @@
                 <span class="page-icon"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></span>
                 <div>
                     <h1 class="h3 mb-1">Інформація про майстра</h1>
-                    <p class="text-muted mb-0">Inspect account status, profile data, permissions, and recent
-                        activity.</p>
                 </div>
             </div>
             <div class="heading-actions">
@@ -26,11 +24,6 @@
                     <div class="profile-hero d-flex flex-column align-items-center text-center">
                         <div class="d-flex justify-content-center gap-2 mt-2">
                             <h2 class="h2 mb-1">{{ master.last_name }} {{ master.first_name }}</h2>
-                            {% if master.is_active %}
-                            <span class="badge text-bg-success mb-3">✔ Активний</span>
-                            {% else %}
-                            <span class="badge text-bg-danger mb-3">✖ Неактивний</span>
-                            {% endif %}
                         </div>
 
                         <div class="d-flex justify-content-center gap-2 mt-2">
@@ -60,18 +53,23 @@
                 </div>
             </div>
             <div class="col-12 col-xl-8">
-                <div class="panel">
+                <div class="panel d-flex flex-column" style="height: 420px;">
                     <div class="panel-header">
                         <div>
-                            <h2 class="h5 mb-1 section-title"><i class="bi bi-clock-history"
-                                                                 aria-hidden="true"></i><span>Послуги майстра</span>
+                            <h2 class="h5 mb-1 section-title">
+                                <i class="bi bi-clock-history" aria-hidden="true"></i><span>Послуги майстра</span>
                             </h2>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-outline-success me-1">Додати послугу</button>
+                            <button 
+                            class="btn btn-sm btn-outline-success me-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addProceduresModal">
+                            Додати послугу
+                        </button>
                         </div>
                     </div>
-                    <div class="activity-list">
+                    <div class="activity-list flex-grow-1 overflow-auto px-3" id="proceduresList">
                         {% for procedure in procedures %}
                         <div class="activity-item d-flex align-items-start justify-content-between">
 
@@ -106,7 +104,7 @@
                     <p class="text-muted mb-0">Найближчі записи майстра</p></div>
                 <input class="form-control form-control-sm table-search" type="search" placeholder="Search orders"
                        data-table-search="ordersTable" aria-label="Search orders"></div>
-            <div class="table-responsive">
+            <div class="table-responsive orders-scroll">
                 <table class="table align-middle mb-0" id="ordersTable" data-searchable-table>
                     <thead>
                     <tr>
@@ -175,5 +173,78 @@
         </div>
     </div>
 </div>
+<!-- ADD PROCEDURES MODAL -->
+<div class="modal fade" id="addProceduresModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Додати послуги майстру
+                </h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="addProceduresModalBody">
+                <form
+                    method='POST'
+                    hx-post="{% url 'master-add-procedures' master.pk %}"
+                    hx-target="#proceduresList"
+                    hx-swap="innerHTML"
+                    hx-on::after-request="bootstrap.Modal.getInstance(document.getElementById('addProceduresModal')).hide();"
+                >
+                    {% csrf_token %}
+
+                    <div class="list-group">
+                        {% for procedure in all_procedures %}
+                            <label class="list-group-item d-flex justify-content-between align-items-center">
+
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input me-2"
+                                        type="checkbox"
+                                        name="procedures"
+                                        value="{{ procedure.id }}"
+                                        {% if procedure.id in assigned_ids %}checked{% endif %}>
+
+                                    <div>
+                                        <div class="fw-semibold">{{ procedure.title }}</div>
+                                        <div class="text-muted small">{{ procedure.description }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <span class="badge text-bg-success">{{ procedure.price }} ₴</span>
+                                    <span class="badge text-bg-secondary">{{ procedure.duration }} хв</span>
+                                </div>
+
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Скасувати
+                        </button>
+
+                        <button type="submit" class="btn btn-success">
+                            Зберегти
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </div>
+<style>
+    .list-group-item:has(input[type="checkbox"]:checked) {
+        background-color: #e8f5e9;
+        border-color: #a5d6a7;
+    }
+
+    .list-group-item {
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+</style>
 {% endblock %}

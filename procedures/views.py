@@ -2,11 +2,11 @@ from django.contrib import auth
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from procedures.forms import MasterForm, ProcedureForm
-from procedures.models import MasterModel, ProcedureModel
+from procedures.models import MasterModel, MasterProcedureModel, ProcedureModel
 
 
 """MASTERS"""
@@ -32,11 +32,17 @@ def masters_list_view(request):
 @login_required
 def master_detail_view(request, pk):
     master = get_object_or_404(MasterModel, pk=pk)
-    procedures = ProcedureModel.objects.filter(procedures__master=master).distinct()
+    procedure_ids = MasterProcedureModel.objects.filter(
+    master=master
+    ).values_list("procedure_id", flat=True)
+
+    procedures = ProcedureModel.objects.filter(id__in=procedure_ids)
 
     context = {
         "master": master,
         "procedures": procedures,
+        "all_procedures": ProcedureModel.objects.all(),
+        "assigned_ids": set(procedures.values_list("id", flat=True)),
     }
 
     return render(request, "masters/detail.html", context)
@@ -56,7 +62,7 @@ def master_create_view(request):
         create_master_form = MasterForm()
 
     return render(request, "masters/partials/create_modal.html", {
-        "create_master_form": create_master_form
+        "create_master_form": create_master_form,
     })
 
 @login_required
@@ -115,7 +121,7 @@ def procedures_list_view(request):
 @login_required
 def procedure_detail_view(request, pk):
     procedure = get_object_or_404(ProcedureModel, pk=pk)
-    masters = MasterModel.objects.filter(masterproceduremodel__procedure=procedure).distinct()
+    masters = MasterModel.objects.filter(master_procedures__procedure=procedure).distinct()
 
     context = {
         "procedure": procedure,
@@ -177,3 +183,39 @@ def procedure_delete_view(request, pk):
     return render(request, "procedures/partials/delete_modal.html", {
         "procedure": procedure
     })
+
+@login_required
+def add_master_procedures(request, pk):
+    master = get_object_or_404(MasterModel, pk=pk)
+
+    if request.method == "POST":
+        procedure_ids = request.POST.getlist("procedures")
+
+        # safety guard
+        if not procedure_ids:
+            procedure_ids = []
+
+        MasterProcedureModel.objects.filter(master=master).delete()
+
+        MasterProcedureModel.objects.bulk_create([
+            MasterProcedureModel(
+                master=master,
+                procedure_id=int(pid)
+            )
+            for pid in procedure_ids
+        ])
+
+        procedure_ids = MasterProcedureModel.objects.filter(
+            master=master
+        ).values_list("procedure_id", flat=True)
+
+        procedures = ProcedureModel.objects.filter(
+            id__in=procedure_ids
+        )
+
+        response = HttpResponse()
+        response["HX-Redirect"] = f"/master/{master.pk}/"
+
+        return response
+
+    return HttpResponse(status=405)

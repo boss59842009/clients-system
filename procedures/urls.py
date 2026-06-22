@@ -10,6 +10,7 @@ urlpatterns = [
     path('master/create/', master_create_view, name='master-create'),
     path('master/update/<int:pk>/', master_update_view, name='master-update'),
     path('master/delete/<int:pk>/', master_delete_view, name='master-delete'),
+    path('master/<int:pk>/add/procedures', add_master_procedures, name='master-add-procedures'),
     # PROCEDURES
     path('procedures/', procedures_list_view, name='procedures-list'),
     path('procedure/<int:pk>/', procedure_detail_view, name='procedure-detail'),
