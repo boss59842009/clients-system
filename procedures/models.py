@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.db import models
 
 class ProcedureModel(models.Model):
@@ -23,12 +24,13 @@ class MasterModel(models.Model):
     first_name = models.CharField(max_length=30, verbose_name='Імʼя')
     phone_number = models.CharField(max_length=15, unique=True, verbose_name='Номер телефону')
     is_active = models.BooleanField(default=True, verbose_name='Активний')
+    color = models.CharField(max_length=7, default="#0d6efd", verbose_name='Колір в календарі')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.last_name} - {self.first_name}"
+        return f"{self.last_name} {self.first_name}"
 
     class Meta:
         verbose_name = 'Майстер'

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.19/index.global.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<main class="dashboard-content">
+    <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="page-heading">
+            <div class="page-heading-copy">
+                <span class="page-icon"><i class="bi bi-calendar2-week" aria-hidden="true"></i></span>
+                <div>
+                    <p class="eyebrow mb-1">Управління</p>
+                    <h1 class="h3 mb-1">Записи</h1>
+                </div>
+            </div>
+            <div class="heading-actions"></div>
+        </div>
+
+        <section class="panel mt-3">
+            <div class="container-fluid py-3">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <select id="masterSelect" class="form-select">
+                            <option value="">Всі майстри</option>
+                            {% for master in masters %}
+                                <option value="{{ master.id }}">{{ master.last_name }} {{ master.first_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-success btn-lg text-nowrap "
+                        hx-get="{% url 'appointments-create' %}"
+                        hx-target="#createModalBody"
+                        hx-trigger="click"
+                        data-bs-toggle="modal"
+                        data-bs-target="#createAppointmentModal">
+                        <i class="bi bi-calendar-plus" aria-hidden="true"></i>Створити запис
+                    </a>
+                    </div>
+                </div>
+
+                <div id="calendar"></div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- VIEW EVENT INFO MODAL -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventProcedureTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header appointment-modal-header">
+                <div class="page-heading-copy mb-0">
+                    <span class="page-icon"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span>
+                    <div>
+                        <p class="eyebrow mb-1" id="eventTitle"></p>
+                        <h5 class="modal-title mb-0" id="eventProcedureTitle"></h5>
+                        <span class="appointment-status-badge" id="eventStatus"></span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+
+            <div class="modal-body appointment-modal-body">
+                <div class="appointment-schedule">
+                    <div class="appointment-schedule-item">
+                        <span class="appointment-schedule-label">Початок</span>
+                        <span class="appointment-schedule-value" id="eventStart"></span>
+                    </div>
+                    <div class="appointment-schedule-divider" aria-hidden="true">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                    <div class="appointment-schedule-item">
+                        <span class="appointment-schedule-label">Кінець</span>
+                        <span class="appointment-schedule-value" id="eventEnd"></span>
+                    </div>
+                </div>
+
+                <div class="appointment-detail-grid">
+                    <div class="appointment-detail-item">
+                        <div class="appointment-detail-icon"><i class="bi bi-person-vcard"></i></div>
+                        <div class="appointment-detail-copy">
+                            <span class="appointment-detail-label">Клієнт</span>
+                            <span class="appointment-detail-value" id="eventClient"></span>
+                        </div>
+                    </div>
+                    <div class="appointment-detail-item">
+                        <div class="appointment-detail-icon"><i class="bi bi-person-badge"></i></div>
+                        <div class="appointment-detail-copy">
+                            <span class="appointment-detail-label">Майстер</span>
+                            <span class="appointment-detail-value" id="eventMaster"></span>
+                        </div>
+                    </div>
+                    <div class="appointment-detail-item appointment-detail-item--wide">
+                        <div class="appointment-detail-icon"><i class="bi bi-stars"></i></div>
+                        <div class="appointment-detail-copy">
+                            <span class="appointment-detail-label">Процедура</span>
+                            <span class="appointment-detail-value" id="eventProcedure"></span>
+                        </div>
+                    </div>
+                    <div class="appointment-detail-item">
+                        <div class="appointment-detail-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <div class="appointment-detail-copy">
+                            <span class="appointment-detail-label">Тривалість</span>
+                            <span class="appointment-detail-value">
+                                <span class="appointment-chip appointment-chip--duration" id="eventDuration"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="appointment-detail-item">
+                        <div class="appointment-detail-icon"><i class="bi bi-cash-coin"></i></div>
+                        <div class="appointment-detail-copy">
+                            <span class="appointment-detail-label">Ціна</span>
+                            <span class="appointment-detail-value">
+                                <span class="appointment-chip appointment-chip--price" id="eventPrice"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="appointment-detail-item appointment-detail-item--wide">
+                        <div class="appointment-detail-icon"><i class="bi bi-pencil-square"></i></div>
+                        <div class="appointment-detail-copy">
+                            <span class="appointment-detail-label">Коментар</span>
+                            <span class="appointment-detail-value" id="eventComment">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer appointment-modal-footer">
+                <div class="appointment-modal-actions">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-warning"
+                            id="eventEditBtn">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                        Редагувати
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            id="eventDeleteBtn">
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                        Видалити
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Закрити
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- CREATE APPOINTMENT MODAL -->
+<div class="modal fade" id="createAppointmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 class="modal-title h5">Створити запис</h2>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="createModalBody">
+                <!-- HTMX вставить форму -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- UPDATE APPOINTMENT MODAL -->
+<div class="modal fade" id="updateAppointmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Редагувати запис</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="updateAppointmentModalBody"></div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE APPOINTMENT MODAL -->
+<div class="modal fade" id="deleteAppointmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Підтвердити видалення</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="deleteAppointmentModalBody"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.21/index.global.min.js"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
+{% endblock %}

@@ -24,6 +24,8 @@ def register(request):
         return render(request, "auth_system/register.html", context={"register_form": register_form})
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("index")
     if request.method == "POST":
         login_form = PhoneAuthenticationForm(request, data=request.POST)
 
@@ -36,8 +38,13 @@ def login_view(request):
 
             return redirect("index")
 
-        messages.error(request, "Невірні дані")
-        return redirect("login")
+        return render(
+            request,
+            "auth_system/login.html",
+            {
+                "login_form": login_form,
+            },
+        )
 
     else:
         login_form = PhoneAuthenticationForm()

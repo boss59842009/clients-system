@@ -113,7 +113,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    "auth_system.backends.PhoneBackend",
+    "auth_system.backends.PhoneNumberBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 # Internationalization

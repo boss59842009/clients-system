@@ -26,6 +26,7 @@ urlpatterns = [
     path('auth/users/', include("auth_system.urls")),
     path('clients/', include("clients.urls")),
     path('', include("procedures.urls")),
+    path('appointments/', include("appointments.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -85,18 +85,18 @@
                 <div class="d-flex align-items-center gap-2 flex-nowrap">
                     <form method="GET" class="d-flex align-items-center gap-2 flex-nowrap">
                         <input class="form-control form-control table-search" type="search" name="q" value="{{ q }}" placeholder="Пошук..."/>
-                        <button class="btn btn-primary">Пошук</button>
+                        <button class="btn btn-outline-primary btn-lg">Пошук</button>
                     </form>
                     {% if request.GET.q %}
-                        <a href="{{ request.path }}" class="btn btn-primary">
+                        <a href="{{ request.path }}" class="btn btn-danger btn-lg">
                             Очистити
                         </a>
                     {% endif %}
-                    <a class="btn btn-outline-secondary btn" href="tables.html">
+                    <a class="btn btn-outline-secondary btn-lg" href="#">
                         <i class="bi bi-download" aria-hidden="true"></i> 
                         Експорт
                     </a>
-                    <a class="btn btn-success btn text-nowrap"
+                    <a class="btn-lg btn-success btn text-nowrap"
                         hx-get="{% url 'clients-create' %}"
                         hx-target="#createModalBody"
                         hx-trigger="click"
@@ -116,7 +116,7 @@
                         <th scope="col">Телеграм</th>
                         <th scope="col">Стать</th>
                         <th scope="col">Дата народження</th>
-                        <th scope="col">Статус</th>
+                        {% comment %} <th scope="col">Статус</th> {% endcomment %}
                         <th scope="col">Створено</th>
                         <th scope="col">Дії</th>
                     </tr>
@@ -130,13 +130,13 @@
                         <td>@{{ client.tg }}</td>
                         <td>{{ client.get_gender_display }}</td>
                         <td>{{ client.birthdate|date:"d.m.Y" }}</td>
-                        <td>
+                        {% comment %} <td>
                             {% if client.is_active %}
                             <span class="badge text-bg-success">✔ Активний</span>
                             {% else %}
                             <span class="badge text-bg-danger">✖ Неактивний</span>
                             {% endif %}
-                        </td>
+                        </td> {% endcomment %}
                         <td>{{ client.created_at|date:"d.m.Y" }}</td>
                         <td>
                             <a class="btn btn-sm btn-outline-primary me-1" href="{% url "clients-detail" client.pk %}">

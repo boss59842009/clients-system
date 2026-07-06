@@ -28,18 +28,18 @@
                 <div class="d-flex align-items-center gap-2 flex-nowrap">
                     <form method="GET" class="d-flex align-items-center gap-2 flex-nowrap">
                         <input class="form-control form-control table-search" type="search" name="q" value="{{ q }}" placeholder="Пошук..."/>
-                        <button class="btn btn-primary">Пошук</button>
+                        <button class="btn btn-outline-primary btn-lg">Пошук</button>
                     </form>
                     {% if request.GET.q %}
                         <a href="{{ request.path }}" class="btn btn-primary">
                             Очистити
                         </a>
                     {% endif %}
-                    <a class="btn btn-outline-secondary btn" href="tables.html">
+                    <a class="btn btn-outline-secondary btn-lg" href="#">
                         <i class="bi bi-download" aria-hidden="true"></i> 
                         Експорт
                     </a>
-                    <a class="btn btn-success btn text-nowrap"
+                    <a class="btn-lg btn-success btn text-nowrap"
                         hx-get="{% url 'procedure-create' %}"
                         hx-target="#createModalBody"
                         hx-trigger="click"

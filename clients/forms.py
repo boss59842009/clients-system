@@ -13,7 +13,7 @@ class ClientForm(forms.ModelForm):
             "first_name": forms.TextInput(attrs={"placeholder": "Імʼя"}),
             "last_name": forms.TextInput(attrs={"placeholder": "Прізвище"}),
             "phone_number": forms.TextInput(attrs={"placeholder": "+380..." }),
-            "tg": forms.TextInput(attrs={"placeholder": "@username"}),
+            "tg": forms.TextInput(attrs={"placeholder": "без @"}),
             "birthdate": forms.DateInput(
                 attrs={"type": "date"},
                 format="%Y-%m-%d"

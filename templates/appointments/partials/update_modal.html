@@ -1,0 +1,24 @@
+{% load crispy_forms_tags %}
+
+<form method="POST"
+      action="{% url 'appointments-update' appointment.pk %}"
+      hx-post="{% url 'appointments-update' appointment.pk %}"
+      hx-target="#updateAppointmentModalBody"
+      hx-swap="innerHTML">
+
+    {% csrf_token %}
+
+    {{ update_appointment_form|crispy }}
+
+    <div class="modal-footer pb-0">
+        <button type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal">
+            Скасувати
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+            Зберегти
+        </button>
+    </div>
+</form>

@@ -1,0 +1,30 @@
+<p>
+  Ви впевнені, що хочете видалити <strong>Запис #{{ appointment.id }} - {{ appointment.client.last_name }} {{ appointment.client.first_name }}</strong>
+  на <strong>{{ appointment.start_at|date:'d.m.Y H:i' }}</strong>?
+</p>
+
+<form method="POST"
+      hx-post="{% url 'appointments-delete' appointment.pk %}"
+      hx-trigger="submit"
+      hx-swap="none">
+    {% csrf_token %}
+    <div class="modal-footer pb-0">
+        <button type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal">
+            Скасувати
+        </button>
+
+        <button type="submit" class="btn btn-danger">Видалити</button>
+    </div>
+</form>
+
+<script>
+    document.body.addEventListener("appointment-deleted", () => {
+        const modalEl = document.getElementById("deleteAppointmentModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+
+        modal?.hide();
+        document.activeElement?.blur();
+    });
+</script>
