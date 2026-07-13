@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<main class="dashboard-content">
+    <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="page-heading">
+            <div class="page-heading-copy">
+                <span class="page-icon"><i class="bi bi-person-circle" aria-hidden="true"></i></span>
+                <div>
+                    <p class="eyebrow mb-1">Управління</p>
+                    <h1 class="h3 mb-1">Записи</h1>
+                </div>
+            </div>
+            <div class="heading-actions">
+                <a href="{% url 'appointments-calendar' %}" class="btn btn-success btn-lg text-nowrap">
+                    <i class="bi bi-calendar-plus" aria-hidden="true"></i>
+                    Календар записів
+                </a>
+            </div>
+        </div>
+        <section class="row g-3 mt-1" aria-label="Dashboard metrics">
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-primary">
+                <div class="metric-top">
+                  <span class="metric-label">Всього записів</span>
+                  <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">{{ all_appointments_count }}</div>
+                <div class="metric-meta">
+                  <span class="text-success">+12.5%</span>
+                  <span>from last month</span>
+                </div>
+              </article>
+            </div>
+    
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-success">
+                <div class="metric-top">
+                  <span class="metric-label">Всього виконано</span>
+                  <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">{{ done_appointments_count }}</div>
+                <div class="metric-meta">
+                  <span class="text-success">+8.2%</span>
+                  <span>new orders</span>
+                </div>
+              </article>
+            </div>
+    
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-warning">
+                <div class="metric-top">
+                  <span class="metric-label">Всього записано</span>
+                  <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">{{ active_appointments_count }}</div>
+                <div class="metric-meta">
+                  <span class="text-success">+5.1%</span>
+                  <span>active users</span>
+                </div>
+              </article>
+            </div>
+    
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="metric-card metric-danger">
+                <div class="metric-top">
+                  <span class="metric-label">Всього відмінено</span>
+                  <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
+                </div>
+                <div class="metric-value">{{ canceled_appointments_count }}</div>
+                <div class="metric-meta">
+                  <span class="text-danger">3 urgent</span>
+                  <span>need review</span>
+                </div>
+              </article>
+            </div>
+          </section>
+
+        <section class="panel mt-3">
+            <div class="panel-header">
+                <div>
+                    <h2 class="h5 mb-1 section-title"><i class="bi bi-table"
+                                                         aria-hidden="true"></i><span>Список записів</span></h2>
+                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте записами.</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-nowrap">
+                    <form method="GET" class="d-flex align-items-center gap-2 flex-nowrap">
+                        <input class="form-control form-control table-search" type="search" name="q" value="{{ q }}" placeholder="Пошук..."/>
+                        <button class="btn btn-outline-primary btn-lg">Пошук</button>
+                    </form>
+                    {% if request.GET.q %}
+                        <a href="{{ request.path }}" class="btn btn-danger btn-lg">
+                            Очистити
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-outline-secondary btn-lg" href="#">
+                        <i class="bi bi-download" aria-hidden="true"></i> 
+                        Експорт
+                    </a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 table-hover" id="ordersTable" data-searchable-table>
+                    <colgroup>
+                        <col style="width: 30px;">
+                        <col style="width: 160px;">
+                        <col style="width: 180px;">
+                        <col style="width: 180px;">
+                        <col style="width: 350px;">
+                        <col style="width: 90px;">
+                        <col style="width: 100px;">
+                        <col style="width: 120px;">
+                        <col style="width: 150px;">
+                    </colgroup>
+                    <thead>
+                    <tr class="table">
+                        <th>#</th>
+                        <th>Дата та час</th>
+                        <th>Клієнт</th>
+                        <th>Майстер</th>
+                        <th>Послуга</th>
+                        <th>Ціна</th>
+                        <th>Тривалість</th>
+                        <th>Статус</th>
+                        <th>Створено</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in appointments %}
+                            <tr>
+                                <td class="fw-semibold">{{ a.id }}</td>
+                                <td>{{ a.start_at|date:"d.m.Y H:i" }}</td>
+                                <td>{{ a.client.last_name }} {{ a.client.first_name }}</td>
+                                <td>{{ a.master.last_name }} {{ a.master.first_name }}</td>
+                                <td>{{ a.procedure.title }}</td>
+                                <td>
+                                    <span class="badge text-bg-success">
+                                        {{ a.procedure.price }} ₴
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge text-bg-secondary">
+                                        {{ a.procedure.duration }} хв
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if a.status == 'done' %}
+                                        <span class="appointment-status-badge status-done">
+                                            <i class="bi-check-circle-fill"></i>
+                                            <span>Виконано</span>
+                                        </span>
+                                    {% elif a.status == 'booked' %}
+                                        <span class="appointment-status-badge status-booked">
+                                            <i class="bi-bookmark-check-fill"></i>
+                                            <span>Записано</span>
+                                        </span>
+                                    {% elif a.status == 'canceled' %}
+                                        <span class="appointment-status-badge status-canceled">
+                                            <i class="bi-x-circle-fill"></i>
+                                            <span>Скасовано</span>
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ a.created_at|date:"d.m.Y H:i" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mt-3">
+
+                <p class="text-muted small mb-0">
+                    Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}
+                </p>
+
+                <nav aria-label="Users pagination">
+                    <ul class="pagination pagination-sm mb-0">
+
+                        {# PREV #}
+                        <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                            <a class="page-link"
+                               href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&search={{ request.GET.q }}{% endif %}{% else %}#{% endif %}">
+                                «
+                            </a>
+                        </li>
+
+                        {# FIRST PAGE #}
+                        {% if page_obj.number > 3 %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                1
+                            </a>
+                        </li>
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+
+                        {# PAGE WINDOW #}
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+
+                        {% if num == page_obj.number %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% endif %}
+                        {% endfor %}
+
+                        {# LAST PAGE #}
+                        {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                {{ page_obj.paginator.num_pages }}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {# NEXT #}
+                        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                            <a class="page-link"
+                               href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% else %}#{% endif %}">
+                                »
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    </div>
+</main>
+<!-- CREATE master MODAL -->
+<div class="modal fade" id="createMasterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 class="modal-title h5">Створити майстра</h2>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body"
+                 id="createModalBody">
+                <!-- HTMX вставить форму -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--UPDATE master MODAL-->
+<div class="modal fade" id="updateMasterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Редагувати майстра</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body"
+                 id="updateModalBody">
+                <!-- HTMX сюди вставить форму -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--DELETE master MODAL-->
+<div class="modal fade" id="deleteMasterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Підтвердити видалення</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+                <div class="modal-body" id="deleteModalBody">
+                <!-- HTMX сюди вставить форму -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

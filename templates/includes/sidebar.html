@@ -16,7 +16,7 @@
             <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
             <span class="nav-text">Головна</span>
         </a>
-        <a class="nav-link {% if request.resolver_match.url_name == 'appointments-calendar' %}active{% endif %}" href="{% url 'appointments-calendar' %}">
+        <a class="nav-link {% if request.resolver_match.url_name == 'appointments-list' %}active{% endif %}" href="{% url 'appointments-list' %}">
             <span class="nav-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
             <span class="nav-text">Записи</span>
         </a>

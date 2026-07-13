@@ -1,6 +1,8 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 
@@ -118,3 +120,36 @@ def load_procedures_view(request):
     return render(request, "appointments/partials/procedure_options.html", {
             "procedures": procedures,
      })
+
+@login_required
+def appointments_list_view(request):
+    q = request.GET.get("q", "").strip()
+    appointments_qs = AppointmentModel.objects.select_related(
+        "master", "client", "procedure"
+    ).order_by("-start_at")
+
+    all_a_count = appointments_qs.count()
+    active_a_count = appointments_qs.filter(status="booked").count()
+    done_a_count = appointments_qs.filter(status="done").count()
+    canceled_a_count = appointments_qs.filter(status="canceled").count()
+
+    if q:
+        appointments_qs = appointments_qs.filter(
+            Q(client__first_name__icontains=q) |
+            Q(client__last_name__icontains=q) |
+            Q(client__phone_number__icontains=q) 
+        )
+    
+    paginator = Paginator(appointments_qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    context = {
+        "appointments": appointments_qs,
+        "page_obj": page_obj,
+        "all_appointments_count": all_a_count,
+        "active_appointments_count": active_a_count,
+        "done_appointments_count": done_a_count,
+        "canceled_appointments_count": canceled_a_count
+    }
+
+    return render(request, "appointments/list.html", context)
