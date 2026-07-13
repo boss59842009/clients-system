@@ -1,0 +1,7 @@
+<option value="">---------</option>
+
+{% for procedure in procedures %}
+    <option value="{{ procedure.id }}">
+        {{ procedure.title }} - {{ procedure.price }} - {{ procedure.duration }}
+    </option>
+{% endfor %}

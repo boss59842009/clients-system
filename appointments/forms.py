@@ -1,7 +1,9 @@
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django import forms
 
 from appointments.models import AppointmentModel
+from procedures.models import ProcedureModel, MasterProcedureModel
 
 
 class AppointmentForm(forms.ModelForm):
@@ -11,7 +13,15 @@ class AppointmentForm(forms.ModelForm):
         fields = ["master", "client", "procedure", "start_at", "status", "comment"]
 
         widgets = {
-            "master": forms.Select(attrs={"class": "form-select"}),
+            "master": forms.Select(
+                attrs={
+                    "class": "form-select",
+                    "hx-get": reverse_lazy("load-procedures"),
+                    "hx-target": "#id_procedure",
+                    "hx-trigger": "change",
+                    "hx-include": "[name='master']",
+                }
+            ),
             "client": forms.Select(attrs={"class": "form-select"}),
             "procedure": forms.Select(attrs={"class": "form-select"}),
             "start_at": forms.DateTimeInput(attrs={"type": "datetime-local", "step": 900}),
@@ -21,6 +31,22 @@ class AppointmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields["procedure"].queryset = ProcedureModel.objects.none()
+
+        master = None
+
+        if self.is_bound:
+            master = self.data.get("master")
+        elif self.instance.pk:
+            master = self.instance.master_id
+
+        if master:
+            self.fields["procedure"].queryset = ProcedureModel.objects.filter(
+                is_active=True,
+                procedure_masters__master_id=master,
+            ).distinct()
+
         if self.instance and self.instance.start_at:
             local_dt = timezone.localtime(self.instance.start_at)
             self.initial["start_at"] = local_dt.strftime("%Y-%m-%dT%H:%M")

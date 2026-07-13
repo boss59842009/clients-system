@@ -4,6 +4,10 @@
   Ви впевнені, що хочете видалити:
   <strong>{{ master.first_name }} {{ master.last_name }}</strong>?
 </p>
+<div class="alert alert-danger" role="alert">
+  <i class="bi bi-exclamation-triangle me-2"></i>
+  <b>Увага! Видалення майстра призведе до видалення всіх записів клієнтів, пов’язаних із ним. Цю дію неможливо скасувати.</b>
+</div>
 <form
   method="POST"
   hx-post="{% url 'master-delete' master.pk %}"

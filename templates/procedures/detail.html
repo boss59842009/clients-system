@@ -51,6 +51,15 @@
                         <div><span>Ціна</span><strong><span class="badge text-bg-success">{{ procedure.price }} ₴</span></strong></div>
                         <div><span>Тривалість</span><strong><span class="badge text-bg-secondary">{{ procedure.duration }} хв</span></strong></div>
                         <div><span>Оновлено</span><strong>{{ procedure.updated_at|date:"d.m.Y" }}</strong></div>
+                        <div><span>Статус</span>
+                            <strong>
+                                {% if procedure.is_active %}
+                                    <span class="badge text-bg-success">✔ Активна</span>
+                                {% else %}
+                                    <span class="badge text-bg-danger">✖ Неактивна</span>
+                                {% endif %}
+                            </strong>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -66,12 +75,12 @@
                             <button class="btn btn-sm btn-outline-success me-1">Додати майстра</button>
                         </div>
                     </div>
-                    <div class="activity-list">
+                    <div class="activity-list flex-grow-1 overflow-auto px-3" id="mastersList">
                         {% for master in masters %}
                         <div class="activity-item d-flex align-items-start justify-content-between">
 
                             <div class="d-flex align-items-start">
-                                <span class="activity-dot bg-primary me-2"></span>
+                                <span class="activity-dot bg-success me-3"></span>
 
                                 <div>
                                     <p class="mb-1 fw-semibold">{{ master.last_name }} {{ master.first_name }}</p>

@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
+import appointments
+from appointments.models import AppointmentModel
 from procedures.forms import MasterForm, ProcedureForm
 from procedures.models import MasterModel, MasterProcedureModel, ProcedureModel
 
@@ -36,13 +38,22 @@ def master_detail_view(request, pk):
     master=master
     ).values_list("procedure_id", flat=True)
 
-    procedures = ProcedureModel.objects.filter(id__in=procedure_ids)
+    procedures = ProcedureModel.objects.filter(
+        is_active=True,
+        id__in=procedure_ids
+    )
+
+    appointments =(AppointmentModel.objects.filter(master=master)
+        .select_related("client", "procedure")
+        .order_by("-start_at")
+    )
 
     context = {
         "master": master,
         "procedures": procedures,
-        "all_procedures": ProcedureModel.objects.all(),
+        "all_procedures": ProcedureModel.objects.filter(is_active=True),
         "assigned_ids": set(procedures.values_list("id", flat=True)),
+        "appointments": appointments,
     }
 
     return render(request, "masters/detail.html", context)
@@ -104,7 +115,7 @@ def master_delete_view(request, pk):
 @login_required
 def procedures_list_view(request):
     q = request.GET.get("q", "").strip()
-    procedures_qs = ProcedureModel.objects.all().order_by("-created_at")
+    procedures_qs = ProcedureModel.objects.all().order_by("-updated_at")
     if q:
         procedures_qs = procedures_qs.filter(
             Q(title__icontains=q)
@@ -170,11 +181,12 @@ def procedure_update_view(request, pk):
     })
 
 @login_required
-def procedure_delete_view(request, pk):
+def procedure_soft_delete_view(request, pk):
     procedure = get_object_or_404(ProcedureModel, pk=pk)
 
     if request.method == "POST":
-        procedure.delete()
+        procedure.is_active = False
+        procedure.save()
         response = HttpResponse()
         response["HX-Redirect"] = "/procedures/"
 
@@ -197,12 +209,19 @@ def add_master_procedures(request, pk):
 
         MasterProcedureModel.objects.filter(master=master).delete()
 
+        active_procedure_ids = set(
+            ProcedureModel.objects.filter(
+                is_active=True,
+                id__in=procedure_ids,
+            ).values_list("id", flat=True)
+        )
+
         MasterProcedureModel.objects.bulk_create([
             MasterProcedureModel(
                 master=master,
-                procedure_id=int(pid)
+                procedure_id=pid,
             )
-            for pid in procedure_ids
+            for pid in active_procedure_ids
         ])
 
         procedure_ids = MasterProcedureModel.objects.filter(

@@ -686,6 +686,15 @@ html[data-theme="dark"] .profile-button .avatar-sm {
   background: #f8fbff;
 }
 
+#ordersTable td,
+#ordersTable th {
+    min-width: 0;
+}
+
+#ordersTable {
+    table-layout: fixed;
+}
+
 .badge {
   border-radius: 8px;
   padding: 0.45rem 0.65rem;
@@ -1777,8 +1786,8 @@ html[data-theme="dark"] {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border: 1px solid var(--admin-border);
   border-radius: 8px;
   background: var(--admin-surface);

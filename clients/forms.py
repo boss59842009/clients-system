@@ -19,6 +19,13 @@ class ClientForm(forms.ModelForm):
                 format="%Y-%m-%d"
             ),
         }
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+
+    #     # Якщо створення нового клієнта
+    #     if self.instance.pk is None:
+    #         self.fields.pop("is_active")
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get("phone_number")

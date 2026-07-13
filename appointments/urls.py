@@ -5,16 +5,18 @@ from appointments.views import (
     appointments_delete_view,
     appointments_update_view,
     calendar_api_view,
-    masters_api_view,
     appointments_create_view,
+    load_procedures_view,
 )
 
 urlpatterns = [
-    path('calendar/', calendar_api_view, name='calendar'),
+    path('calendar/', calendar_api_view, name='appointments-calendar'),
     path('update/<int:pk>/', appointments_update_view, name='appointments-update'),
     path('delete/<int:pk>/', appointments_delete_view, name='appointments-delete'),
     path('create/', appointments_create_view, name='appointments-create'),
     # API
-    path('calendar/api/masters/', masters_api_view),
     path('api/', appointments_api_view),
+    # appointments/urls.py
+
+    path("load-procedures/", load_procedures_view, name="load-procedures"),
 ]

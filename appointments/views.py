@@ -6,29 +6,14 @@ from django.shortcuts import get_object_or_404, render
 
 from appointments.forms import AppointmentForm
 from appointments.models import AppointmentModel
-from procedures.models import MasterModel
+from procedures.models import MasterModel, ProcedureModel
 
 
 @login_required
 def calendar_api_view(request):
     return render(request, "appointments/calendar.html", {
-        "masters": MasterModel.objects.all(),
+        "masters": MasterModel.objects.filter(is_active=True),
     })
-
-
-@login_required
-def masters_api_view(request):
-    masters = MasterModel.objects.all()
-
-    data = [
-        {
-            "id": m.id,
-            "title": m.last_name + " " + m.first_name,
-        }
-        for m in masters
-    ]
-
-    return JsonResponse(data, safe=False)
 
 
 @login_required
@@ -119,3 +104,17 @@ def appointments_create_view(request):
     return render(request, "appointments/partials/create_modal.html", {
         "create_appointment_form": create_appointment_form,
     })
+
+
+@login_required
+def load_procedures_view(request):
+    master_id = request.GET.get("master")
+
+    procedures = ProcedureModel.objects.filter(
+        is_active=True,
+        procedure_masters__master_id=master_id,
+    ).distinct()
+
+    return render(request, "appointments/partials/procedure_options.html", {
+            "procedures": procedures,
+     })

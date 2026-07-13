@@ -7,13 +7,19 @@ class MasterForm(forms.ModelForm):
     class Meta:
         model = MasterModel
         fields = "__all__"
-        exclude = ["is_active"]
 
         widgets = {
             "first_name": forms.TextInput(attrs={"placeholder": "Імʼя"}),
             "last_name": forms.TextInput(attrs={"placeholder": "Прізвище"}),
             "phone_number": forms.TextInput(attrs={"placeholder": "+380..." }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Якщо створення нового майстра
+        if self.instance.pk is None:
+            self.fields.pop("is_active")
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get("phone_number")
@@ -33,7 +39,6 @@ class ProcedureForm(forms.ModelForm):
     class Meta:
         model = ProcedureModel
         fields = "__all__"
-        exclude = ["is_active"]
 
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Назва"}),
@@ -41,3 +46,10 @@ class ProcedureForm(forms.ModelForm):
             "price": forms.NumberInput(attrs={"placeholder": "Ціна в ₴" }),
             "duration": forms.NumberInput(attrs={"placeholder": "Тривалість в зв" }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Якщо створення нової послуги
+        if self.instance.pk is None:
+            self.fields.pop("is_active")

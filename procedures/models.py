@@ -3,7 +3,7 @@ from django.db import models
 
 class ProcedureModel(models.Model):
     title = models.CharField(max_length=100, verbose_name='Назва')
-    description = models.TextField(verbose_name='Опис')
+    description = models.TextField(verbose_name='Опис', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Ціна')
     duration = models.PositiveIntegerField(verbose_name='Тривалість')
     is_active = models.BooleanField(default=True, verbose_name='Активна')

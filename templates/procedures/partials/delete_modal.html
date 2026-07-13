@@ -1,9 +1,13 @@
 {% load crispy_forms_tags %}
 
 <p>
-  Ви впевнені, що хочете видалити:
+  Ви впевнені, що хочете деактивувати:
   <strong>{{ procedure.title }}</strong>?
 </p>
+<div class="alert alert-warning" role="alert">
+  <i class="bi bi-exclamation-triangle me-2"></i>
+  <b>Увага! Послугу буде деактивовано. Вона більше не буде доступна для створення нових записів, але всі існуючі записи клієнтів із цією послугою будуть збережені.</b>
+</div>
 <form
   method="POST"
   hx-post="{% url 'procedure-delete' procedure.pk %}"
@@ -20,7 +24,7 @@
       Скасувати
     </button>
 
-    <button type="submit" class="btn btn-danger">Видалити</button>
+    <button type="submit" class="btn btn-danger">Декативувати</button>
   </div>
 </form>
 

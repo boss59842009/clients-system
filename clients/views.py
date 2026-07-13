@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
+import appointments
+from appointments.models import AppointmentModel
+
 from .forms import ClientForm
 from .models import ClientModel
 
@@ -35,9 +38,13 @@ def clients_list_view(request):
 @login_required
 def clients_detail_view(request, pk):
     client = get_object_or_404(ClientModel, pk=pk)
+    appointments = AppointmentModel.objects.filter(
+        client=client,
+    ).order_by("start_at")
 
     context = {
-        "client": client
+        "client": client,
+        "appointments": appointments
     }
 
     return render(request, "clients/detail.html", context)

@@ -9,22 +9,21 @@ from procedures.models import ProcedureModel, MasterModel
 
 class AppointmentModel(models.Model):
     STATUS_CHOICES = (
-        ("booked", "Заброньовано"),
+        ("booked", "Записано"),
         ("done", "Виконано"),
         ("canceled", "Відмінено"),
-        ("no_show", "Приховано"),
     )
 
     master = models.ForeignKey(MasterModel, on_delete=models.CASCADE, verbose_name='Майстер')
     client = models.ForeignKey(ClientModel, on_delete=models.CASCADE, verbose_name='Клієнт')
-    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE, verbose_name='Процедура') 
+    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE, verbose_name='Послуга') 
 
     start_at = models.DateTimeField(verbose_name='Початок')
     end_at = models.DateTimeField(blank=True, null=True, verbose_name='Завершення')
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="booked", verbose_name='Статус')
-
     comment = models.CharField(max_length=256, blank=True, null=True, verbose_name="Коментар")
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="booked", verbose_name='Статус')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

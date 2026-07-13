@@ -9,8 +9,6 @@
                 <span class="page-icon"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></span>
                 <div>
                     <h1 class="h3 mb-1">Інформація про клієнта</h1>
-                    <p class="text-muted mb-0">Inspect account status, profile data, permissions, and recent
-                        activity.</p>
                 </div>
             </div>
             <div class="heading-actions">
@@ -26,11 +24,6 @@
                     <div class="profile-hero d-flex flex-column align-items-center text-center">
                         <div class="d-flex justify-content-center gap-2 mt-2">
                             <h2 class="h2 mb-1">{{ client.last_name }} {{ client.first_name }}</h2>                    
-                            {% if client.is_active %}
-                                <span class="badge text-bg-success mb-3">✔ Активний</span>
-                            {% else %}
-                                <span class="badge text-bg-danger mb-3">✖ Неактивний</span>
-                            {% endif %}
                         </div>
                     
                         <div class="d-flex justify-content-center gap-2 mt-2">
@@ -71,20 +64,58 @@
                         <div>
                             <h2 class="h5 mb-1 section-title"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Останні записи</span></h2>
                         </div>
+                        <div>
+                            <a class="btn btn-success btn-sm text-nowrap"
+                                hx-get="{% url 'appointments-create' %}"
+                                hx-target="#createModalBody"
+                                hx-trigger="click"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createAppointmentModal">
+                                <i class="bi bi-calendar-plus" aria-hidden="true"></i>Створити запис
+                            </a>
+                        </div>
                     </div>
-                    <div class="activity-list">
-                        <div class="activity-item"><span class="activity-dot bg-primary"></span>
-                            <div><p class="mb-1 fw-semibold">Updated billing permissions</p>
-                                <p class="text-muted small mb-0">2 hours ago</p></div>
+                    <div class="activity-list flex-grow-1 overflow-auto px-3" id="appointmentsList">
+                        {% for a in appointments %}
+                        <div class="activity-item d-flex align-items-start justify-content-between">
+
+                            <div class="d-flex align-items-start">
+                                <span class="activity-dot bg-primary me-3"></span>
+
+                                <div>
+                                    <h5 class="mb-1 fw-semibold">{{ a.start_at }}</h5>
+                                    <p class="mb-1 fw-semibold">{{ a.procedure.title }}</p>
+                                    <p class="text-muted small mb-0">{{ a.master.last_name }} {{ a.master.first_name }}</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 ms-3">
+                                <span class="badge text-bg-success">
+                                    {{ a.procedure.price }} ₴
+                                </span>
+                                <span class="badge text-bg-secondary">
+                                    {{ a.procedure.duration }} хв
+                                </span>
+                                {% if a.status == 'done' %}
+                                    <span class="appointment-status-badge status-done">
+                                        <i class="bi-check-circle-fill"></i>
+                                        <span>Виконано</span>
+                                    </span>
+                                {% elif a.status == 'booked' %}
+                                    <span class="appointment-status-badge status-booked">
+                                        <i class="bi-bookmark-check-fill"></i>
+                                        <span>Записано</span>
+                                    </span>
+                                {% elif a.status == 'canceled' %}
+                                    <span class="appointment-status-badge status-canceled">
+                                        <i class="bi-x-circle-fill"></i>
+                                        <span>Скасовано</span>
+                                    </span>
+                                {% endif %}
+                            </div>
+
                         </div>
-                        <div class="activity-item"><span class="activity-dot bg-success"></span>
-                            <div><p class="mb-1 fw-semibold">Approved new teammate</p>
-                                <p class="text-muted small mb-0">Yesterday</p></div>
-                        </div>
-                        <div class="activity-item"><span class="activity-dot bg-warning"></span>
-                            <div><p class="mb-1 fw-semibold">Changed password</p>
-                                <p class="text-muted small mb-0">Apr 30, 2026</p></div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

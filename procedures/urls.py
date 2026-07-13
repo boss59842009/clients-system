@@ -16,5 +16,5 @@ urlpatterns = [
     path('procedure/<int:pk>/', procedure_detail_view, name='procedure-detail'),
     path('procedure/create/', procedure_create_view, name='procedure-create'),
     path('procedure/update/<int:pk>/', procedure_update_view, name='procedure-update'),
-    path('procedure/delete/<int:pk>/', procedure_delete_view, name='procedure-delete'),
+    path('procedure/delete/<int:pk>/', procedure_soft_delete_view, name='procedure-delete'),
 ]

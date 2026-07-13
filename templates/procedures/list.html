@@ -6,11 +6,10 @@
     <div class="container-fluid px-3 px-lg-4 py-4">
         <div class="page-heading">
             <div class="page-heading-copy">
-                <span class="page-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+                <span class="page-icon"><i class="bi bi-stars" aria-hidden="true"></i></span>
                 <div>
                     <p class="eyebrow mb-1">Управління</p>
                     <h1 class="h3 mb-1">Послуги</h1>
-                    <p class="text-muted mb-0">Управління послугами</p>
                 </div>
             </div>
             <div class="heading-actions">
@@ -56,7 +55,8 @@
                         <th scope="col">Назва</th>
                         <th scope="col">Ціна</th>
                         <th scope="col">Тривалість</th>
-                        <th scope="col">Створено</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Оновлено</th>
                         <th scope="col">Дії</th>
                     </tr>
                     </thead>
@@ -66,7 +66,14 @@
                         <td>{{ procedure.title }}</td>
                         <td><span class="badge text-bg-success">{{ procedure.price }} ₴</span></td>
                         <td><span class="badge text-bg-secondary">{{ procedure.duration }} хв</span></td>
-                        <td>{{ procedure.created_at|date:"d.m.Y" }}</td>
+                        <td>
+                            {% if procedure.is_active %}
+                            <span class="badge text-bg-success">✔ Активна</span>
+                            {% else %}
+                            <span class="badge text-bg-danger">✖ Неактивна</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ procedure.updated_at|date:"d.m.Y" }}</td>
                         <td>
                             <a class="btn btn-sm btn-outline-primary me-1" href="{% url "procedure-detail" procedure.pk %}">
                                 <i class="bi bi-eye">
@@ -215,7 +222,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Підтвердити видалення</h5>
+                <h5 class="modal-title">Підтвердити деактивацію</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
                 <div class="modal-body" id="deleteModalBody">
