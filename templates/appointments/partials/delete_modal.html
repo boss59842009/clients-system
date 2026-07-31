@@ -1,10 +1,14 @@
 <p>
-  Ви впевнені, що хочете видалити <strong>Запис #{{ appointment.id }} - {{ appointment.client.last_name }} {{ appointment.client.first_name }}</strong>
+  Ви впевнені, що хочете скасувати <strong>Запис #{{ appointment.id }} - {{ appointment.client.last_name }} {{ appointment.client.first_name }}</strong>
   на <strong>{{ appointment.start_at|date:'d.m.Y H:i' }}</strong>?
 </p>
+<div class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <b>Увага! Запис буде переведено в статус "Скасовано"</b>
+  </div>
 
 <form method="POST"
-      hx-post="{% url 'appointments-delete' appointment.pk %}"
+      hx-post="{% url 'appointments-cancel' appointment.pk %}"
       hx-trigger="submit"
       hx-swap="none">
     {% csrf_token %}
@@ -15,12 +19,12 @@
             Скасувати
         </button>
 
-        <button type="submit" class="btn btn-danger">Видалити</button>
+        <button type="submit" class="btn btn-danger">Скасувати</button>
     </div>
 </form>
 
 <script>
-    document.body.addEventListener("appointment-deleted", () => {
+    document.body.addEventListener("appointment-canceled", () => {
         const modalEl = document.getElementById("deleteAppointmentModal");
         const modal = bootstrap.Modal.getInstance(modalEl);
 

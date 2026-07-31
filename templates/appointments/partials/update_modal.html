@@ -3,7 +3,7 @@
 <form method="POST"
       action="{% url 'appointments-update' appointment.pk %}"
       hx-post="{% url 'appointments-update' appointment.pk %}"
-      hx-target="#updateAppointmentModalBody"
+      hx-target="#updateModalBody"
       hx-swap="innerHTML">
 
     {% csrf_token %}

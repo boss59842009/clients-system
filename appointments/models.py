@@ -11,7 +11,7 @@ class AppointmentModel(models.Model):
     STATUS_CHOICES = (
         ("booked", "Записано"),
         ("done", "Виконано"),
-        ("canceled", "Відмінено"),
+        ("canceled", "Скасовано"),
     )
 
     master = models.ForeignKey(MasterModel, on_delete=models.CASCADE, verbose_name='Майстер')

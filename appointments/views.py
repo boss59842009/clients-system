@@ -1,14 +1,46 @@
+from datetime import timedelta
 import json
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
 
-from appointments.forms import AppointmentForm
+from appointments.forms import AppointmentForm, MasterFilterForm, StatusFilterForm
 from appointments.models import AppointmentModel
 from procedures.models import MasterModel, ProcedureModel
+
+
+def get_appointments_statistics(queryset):
+    today = timezone.localdate()
+
+    week_start = today - timedelta(days=today.weekday())
+    week_end = week_start + timedelta(days=7)
+
+    return queryset.aggregate(
+        all_appointments_count=Count("id"),
+        week_appointments_count=Count(
+            "id",
+            filter=Q(
+                start_at__date__gte=week_start,
+                start_at__date__lt=week_end,
+                status="booked",
+            ),
+        ),
+        today_appointments_count=Count(
+            "id",
+            filter=Q(
+                start_at__date=today,
+                status="booked",
+            ),
+        ),
+        canceled_appointments_count=Count(
+            "id",
+            filter=Q(status="canceled"),
+        ),
+    )
 
 
 @login_required
@@ -67,6 +99,7 @@ def appointments_update_view(request, pk):
             update_appointment_form.save()
             response = HttpResponse()
             response["HX-Trigger"] = json.dumps({"appointment-updated": True})
+            response["HX-Redirect"] = ""
             return response
     else:
         update_appointment_form = AppointmentForm(instance=appointment)
@@ -91,6 +124,22 @@ def appointments_delete_view(request, pk):
         "appointment": appointment,
     })
 
+@login_required
+def appointments_cancel_view(request, pk):
+    appointment = get_object_or_404(AppointmentModel, pk=pk)
+
+    if request.method == "POST":
+        appointment.status = "canceled"
+        appointment.save()
+        response = HttpResponse()
+        response["HX-Trigger"] = json.dumps({"appointment-canceled": True})
+        response["HX-Redirect"] = ""
+
+        return response
+
+    return render(request, "appointments/partials/delete_modal.html", {
+        "appointment": appointment,
+    })
 
 @login_required
 def appointments_create_view(request):
@@ -128,10 +177,19 @@ def appointments_list_view(request):
         "master", "client", "procedure"
     ).order_by("-start_at")
 
-    all_a_count = appointments_qs.count()
-    active_a_count = appointments_qs.filter(status="booked").count()
-    done_a_count = appointments_qs.filter(status="done").count()
-    canceled_a_count = appointments_qs.filter(status="canceled").count()
+    statistics = get_appointments_statistics(appointments_qs)
+
+    status_filter_form = StatusFilterForm(request.GET)
+    if status_filter_form.is_valid():
+        status = status_filter_form.cleaned_data["status"]
+        if status:
+            appointments_qs = appointments_qs.filter(status=status)
+
+    master_filter_form = MasterFilterForm(request.GET)
+    if master_filter_form.is_valid():
+        master = master_filter_form.cleaned_data["master"]
+        if master:
+            appointments_qs = appointments_qs.filter(master=master)
 
     if q:
         appointments_qs = appointments_qs.filter(
@@ -140,16 +198,15 @@ def appointments_list_view(request):
             Q(client__phone_number__icontains=q) 
         )
     
-    paginator = Paginator(appointments_qs, 10)
+    paginator = Paginator(appointments_qs, 20)
     page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
         "appointments": appointments_qs,
         "page_obj": page_obj,
-        "all_appointments_count": all_a_count,
-        "active_appointments_count": active_a_count,
-        "done_appointments_count": done_a_count,
-        "canceled_appointments_count": canceled_a_count
+        **statistics,
+        "status_filter_form": status_filter_form,
+        "master_filter_form": master_filter_form,
     }
 
     return render(request, "appointments/list.html", context)

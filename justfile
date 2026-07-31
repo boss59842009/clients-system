@@ -23,6 +23,11 @@ setup-tasks:
     python manage.py migrate
     python manage.py setup_periodic_tasks
 
+# Створення міграції
+migrate:
+    python manage.py makemigrations
+    python manage.py migrate
+
 # Запуск Django + Celery Worker + Celery Beat Worker
 run:
     bash -c '\

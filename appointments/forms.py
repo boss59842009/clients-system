@@ -3,7 +3,7 @@ from django.utils import timezone
 from django import forms
 
 from appointments.models import AppointmentModel
-from procedures.models import ProcedureModel, MasterProcedureModel
+from procedures.models import MasterModel, ProcedureModel, MasterProcedureModel
 
 
 class AppointmentForm(forms.ModelForm):
@@ -79,3 +79,37 @@ class AppointmentForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+
+class StatusFilterForm(forms.Form):
+    status = forms.ChoiceField(
+        label="Статус",
+        required=False,
+        choices=[("", "Усі")] + list(AppointmentModel.STATUS_CHOICES),
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "onchange": "this.form.submit()",
+            }
+        ),
+    )
+
+class MasterFilterForm(forms.Form):
+    master = forms.ModelChoiceField(
+        label="Майстер",
+        required=False,
+        queryset=MasterModel.objects.all().order_by("last_name", "first_name"),
+        empty_label="Усі",
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "onchange": "this.form.submit()",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["master"].label_from_instance = (
+            lambda obj: f"{obj.last_name} {obj.first_name}"
+        )

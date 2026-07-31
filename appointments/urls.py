@@ -3,6 +3,7 @@ from django.urls import path
 from appointments.views import (
     appointments_api_view,
     appointments_delete_view,
+    appointments_cancel_view,
     appointments_update_view,
     calendar_api_view,
     appointments_create_view,
@@ -15,6 +16,7 @@ urlpatterns = [
     path('calendar/', calendar_api_view, name='appointments-calendar'),
     path('update/<int:pk>/', appointments_update_view, name='appointments-update'),
     path('delete/<int:pk>/', appointments_delete_view, name='appointments-delete'),
+    path('cancel/<int:pk>/', appointments_cancel_view, name='appointments-cancel'),
     path('create/', appointments_create_view, name='appointments-create'),
     # API
     path('api/', appointments_api_view),
