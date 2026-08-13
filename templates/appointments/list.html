@@ -6,7 +6,7 @@
     <div class="container-fluid px-3 px-lg-4 py-4">
         <div class="page-heading">
             <div class="page-heading-copy">
-                <span class="page-icon"><i class="bi bi-person-circle" aria-hidden="true"></i></span>
+                <span class="page-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
                 <div>
                     <p class="eyebrow mb-1">Управління</p>
                     <h1 class="h3 mb-1">Записи</h1>
@@ -104,13 +104,13 @@
 
                     <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
                         <form method="GET" class="d-flex align-items-center gap-2">
-                            <input class="form-control table-search" type="search" name="q" value="{{ q }}" placeholder="Пошук..."/>
-                            <button class="btn btn-outline-primary">Пошук</button>
+                            <input class="form-control table-search" type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="По клієнту та номеру"/>
+                            <button class="btn btn-outline-primary btn-lg">Пошук</button>
                         </form>
                         {% if request.GET.q %}
-                            <a href="{{ request.path }}" class="btn btn-outline-danger">Очистити</a>
+                            <a href="{{ request.path }}" class="btn btn-danger btn-lg"><i class="bi bi-x-lg"></i></a>
                         {% endif %}
-                        <a class="btn btn-outline-secondary" href="#">
+                        <a class="btn btn-outline-secondary btn-lg" href="#">
                         <i class="bi bi-download" aria-hidden="true"></i>
                         Експорт
                         </a>

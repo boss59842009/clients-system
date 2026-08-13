@@ -1,5 +1,5 @@
 :root {
-  --sidebar-width: 280px;
+  --sidebar-width: 200px;
   --sidebar-mini-width: 84px;
   --admin-bg: #f5f7fb;
   --admin-surface: #ffffff;
@@ -1030,6 +1030,7 @@ html[data-theme="dark"] .profile-button .avatar-sm {
 
   body.sidebar-mini .sidebar-nav .nav-link {
     justify-content: center;
+    gap: 0;
     padding-inline: 0.65rem;
   }
 

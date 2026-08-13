@@ -1,10 +1,10 @@
+import json
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-import appointments
 from appointments.models import AppointmentModel
 
 from .forms import ClientForm
@@ -24,6 +24,7 @@ def clients_list_view(request):
 
     clients_count = clients_qs.count()
     active_clients_count = ClientModel.objects.filter(is_active=True).count()
+    client_created = request.GET.get("client_created") == "1"
     
     paginator = Paginator(clients_qs, 10)
     page_obj = paginator.get_page(request.GET.get("page"))
@@ -33,6 +34,7 @@ def clients_list_view(request):
         "page_obj": page_obj,
         "clients_count": clients_count,
         "active_clients_count": active_clients_count,
+        "client_created": client_created,
     })
 
 @login_required
@@ -57,15 +59,15 @@ def client_create_view(request):
         if create_client_form.is_valid():
             create_client_form.save()
             create_client_form = ClientForm()
-            return render(request, "clients/partials/create_client_modal.html", {
-                "create_client_form": create_client_form,
-                "success": True
-            })
+            response = HttpResponse()
+            response["HX-Redirect"] = "/clients/?client_created=1"
+            return response
     else:
         create_client_form = ClientForm()
 
     return render(request, "clients/partials/create_client_modal.html", {
-        "create_client_form": create_client_form
+        "create_client_form": create_client_form,
+        "client_created": request.GET.get("client_created") == "1",
     })
 
 @login_required
