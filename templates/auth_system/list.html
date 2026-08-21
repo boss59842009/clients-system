@@ -6,10 +6,10 @@
     <div class="container-fluid px-3 px-lg-4 py-4">
         <div class="page-heading">
             <div class="page-heading-copy">
-                <span class="page-icon"><i class="bi bi-person-circle" aria-hidden="true"></i></span>
+                <span class="page-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
                 <div>
-                    <p class="eyebrow mb-1">Управління</p>
-                    <h1 class="h3 mb-1">Майстри</h1>
+                    <p class="eyebrow mb-1">Упарвління</p>
+                    <h1 class="h3 mb-1">Користувачі</h1>
                 </div>
             </div>
             <div class="heading-actions">
@@ -21,8 +21,8 @@
             <div class="panel-header">
                 <div>
                     <h2 class="h5 mb-1 section-title"><i class="bi bi-table"
-                                                         aria-hidden="true"></i><span>Список майстрів</span></h2>
-                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте обліковими записами майстрів.</p>
+                                                         aria-hidden="true"></i><span>Список користувачів</span></h2>
+                    <p class="text-muted mb-0">Шукайте, переглядайте та керуйте обліковими записами користувачів.</p>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-nowrap">
                     <form method="GET" class="d-flex align-items-center gap-2 flex-nowrap">
@@ -32,17 +32,13 @@
                     {% if request.GET.q %}
                         <a href="{{ request.path }}" class="btn btn-danger btn-lg"><i class="bi bi-x-lg"></i></a>
                     {% endif %}
-                    <!-- <a class="btn btn-outline-secondary btn-lg" href="#">
-                        <i class="bi bi-download" aria-hidden="true"></i> 
-                        Експорт
-                    </a> -->
                     <a class="btn-lg btn-success btn text-nowrap"
-                        hx-get="{% url 'master-create' %}"
+                        hx-get="{% url 'user-create' %}"
                         hx-target="#createModalBody"
                         hx-trigger="click"
                         data-bs-toggle="modal"
-                        data-bs-target="#createMasterModal">
-                        <i class="bi bi-person-badge-fill" aria-hidden="true"></i>Створити майстра
+                        data-bs-target="#createUserModal">
+                        <i class="bi bi-person-plus" aria-hidden="true"></i>Створити користувача
                     </a>
                 </div>
             </div>
@@ -53,44 +49,42 @@
                         <th scope="col">Прізвище</th>
                         <th scope="col">Імʼя</th>
                         <th scope="col">Номер телефону</th>
+                        <th scope="col">Роль</th>
                         <th scope="col">Статус</th>
                         <th scope="col">Створено</th>
                         <th scope="col">Дії</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for master in masters %}
+                    {% for user in users %}
                     <tr>
-                        <td>{{ master.last_name }}</td>
-                        <td>{{ master.first_name }}</td>
-                        <td>{{ master.phone_number }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.phone_number }}</td>
+                        <td>role</td>
                         <td>
-                            {% if master.is_active %}
+                            {% if user.is_active %}
                             <span class="badge text-bg-success">✔ Активний</span>
                             {% else %}
                             <span class="badge text-bg-danger">✖ Неактивний</span>
                             {% endif %}
                         </td>
-                        <td>{{ master.created_at|date:"d.m.Y" }}</td>
+                        <td>{{ user.date_joined|date:"d.m.Y" }}</td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary me-1" href="{% url "master-detail" master.pk %}">
-                                <i class="bi bi-eye">
-                                </i>
-                            </a>
                             <button class="btn btn-sm btn-outline-warning me-1"
-                                    hx-get="{% url 'master-update' master.pk %}"
+                                    hx-get="{% url 'user-update' user.pk %}"
                                     hx-target="#updateModalBody"
                                     hx-trigger="click"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#updateMasterModal">
+                                    data-bs-target="#updateUserModal">
                                 <i class="bi bi-pencil-square"></i>
                             </button> 
                             <button class="btn btn-sm btn-outline-danger"
-                                    hx-get="{% url 'master-delete' master.pk %}"
+                                    hx-get="{% url 'user-delete' user.pk %}"
                                     hx-target="#deleteModalBody"
                                     hx-swap="innerHTML"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#deleteMasterModal">
+                                    data-bs-target="#deleteUserModal">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -174,13 +168,13 @@
         </section>
     </div>
 </main>
-<!-- CREATE master MODAL -->
-<div class="modal fade" id="createMasterModal" tabindex="-1">
+<!-- CREATE USER MODAL -->
+<div class="modal fade" id="createUserModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h2 class="modal-title h5">Створити майстра</h2>
+                <h2 class="modal-title h5">Створити користувача</h2>
 
                 <button type="button"
                         class="btn-close"
@@ -189,8 +183,8 @@
 
             <div class="modal-body"
                  id="createModalBody"
-                 {% if master_created %}
-                    hx-get="{% url 'master-create' %}?master_created=1"
+                 {% if user_created %}
+                    hx-get="{% url 'user-create' %}?user_created=1"
                     hx-trigger="load"
                     hx-swap="innerHTML"
                 {% endif %}>
@@ -200,27 +194,27 @@
         </div>
     </div>
 </div>
-{% if master_created %}
+{% if user_created %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const modalElement = document.getElementById("createMasterModal");
+    const modalElement = document.getElementById("createUserModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     modal.show();
 
     modalElement.addEventListener("hidden.bs.modal", function () {
-        window.history.replaceState({}, "", "{% url 'masters-list' %}");
+        window.history.replaceState({}, "", "{% url 'users-list' %}");
     }, { once: true });
 });
 </script>
 {% endif %}
-<!--UPDATE master MODAL-->
-<div class="modal fade" id="updateMasterModal" tabindex="-1">
+<!--UPDATE USER MODAL-->
+<div class="modal fade" id="updateUserModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Редагувати майстра</h5>
+                <h5 class="modal-title">Редагувати користувача</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"></button>
@@ -234,8 +228,8 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
     </div>
 </div>
-<!--DELETE master MODAL-->
-<div class="modal fade" id="deleteMasterModal" tabindex="-1">
+<!--DELETE USER MODAL-->
+<div class="modal fade" id="deleteUserModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

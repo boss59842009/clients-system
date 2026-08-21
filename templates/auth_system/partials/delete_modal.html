@@ -1,16 +1,13 @@
 {% load crispy_forms_tags %}
 
 <p>
-  Ви впевнені, що хочете видалити:
-  <strong>{{ client.first_name }} {{ client.last_name }}</strong>?
+  Ви впевнені, що хочете видалити користувача:
+  <strong>{{ user.first_name }} {{ user.last_name }}</strong>?
 </p>
-<div class="alert alert-danger" role="alert">
-  <i class="bi bi-exclamation-triangle me-2"></i>
-  <b>Увага! Видалення клієнта призведе до видалення всіх його записів. Цю дію неможливо скасувати.</b>
-</div>
+
 <form
   method="POST"
-  hx-post="{% url 'clients-delete' client.pk %}"
+  hx-post="{% url 'user-delete' user.pk %}"
   hx-trigger="submit"
   hx-swap="none"
 >

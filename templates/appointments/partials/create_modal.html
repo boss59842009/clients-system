@@ -8,8 +8,8 @@
 
 <form
   method="POST"
-  hx-post="{% url 'appointments-create' %}"
-  hx-target="#createModalBody"
+  hx-post="{{ form_action }}"
+  hx-target="#createAppointmentModalBody"
   hx-swap="innerHTML"
   hx-on="htmx:afterRequest: window.dispatchEvent(new Event('appointment-created'))"
 > 
@@ -28,20 +28,3 @@
     <button type="submit" class="btn btn-primary">Створити</button>
   </div>
 </form>
-
-<script>
-  document.body.addEventListener("htmx:afterSwap", (event) => {
-    document.querySelectorAll(".auto-hide-alert").forEach((el) => {
-      if (el.dataset.timerSet) return; // щоб не дублювати таймер
-      el.style.transition = "opacity 300ms ease";
-      el.dataset.timerSet = "1";
-
-      const timeout = parseInt(el.dataset.hideAfter || "3000", 10);
-
-      setTimeout(() => {
-        el.style.opacity = "0";
-        setTimeout(() => el.remove(), 300);
-      }, timeout);
-    });
-  });
-</script>

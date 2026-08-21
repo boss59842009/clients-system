@@ -1,6 +1,5 @@
 from django.urls import path
 
-import procedures
 from .views import *
 
 urlpatterns = [
@@ -17,4 +16,6 @@ urlpatterns = [
     path('procedure/create/', procedure_create_view, name='procedure-create'),
     path('procedure/update/<int:pk>/', procedure_update_view, name='procedure-update'),
     path('procedure/delete/<int:pk>/', procedure_soft_delete_view, name='procedure-delete'),
+    path('import/', import_procedures_view, name='import-procedures'),
+
 ]

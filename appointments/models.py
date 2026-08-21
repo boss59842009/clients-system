@@ -14,9 +14,9 @@ class AppointmentModel(models.Model):
         ("canceled", "Скасовано"),
     )
 
-    master = models.ForeignKey(MasterModel, on_delete=models.CASCADE, verbose_name='Майстер')
+    master = models.ForeignKey(MasterModel, on_delete=models.PROTECT, verbose_name='Майстер')
     client = models.ForeignKey(ClientModel, on_delete=models.CASCADE, verbose_name='Клієнт')
-    procedure = models.ForeignKey(ProcedureModel, on_delete=models.CASCADE, verbose_name='Послуга') 
+    procedure = models.ForeignKey(ProcedureModel, on_delete=models.PROTECT, verbose_name='Послуга') 
 
     start_at = models.DateTimeField(verbose_name='Початок')
     end_at = models.DateTimeField(blank=True, null=True, verbose_name='Завершення')

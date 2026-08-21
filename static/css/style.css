@@ -701,7 +701,7 @@ html[data-theme="dark"] .profile-button .avatar-sm {
 }
 
 .table-search {
-  width: min(260px, 100%);
+  width: min(500px, 100%);
   border-color: var(--admin-border);
   border-radius: 8px;
 }

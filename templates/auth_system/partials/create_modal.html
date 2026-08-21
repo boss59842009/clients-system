@@ -1,20 +1,20 @@
 {% load crispy_forms_tags %} 
 
-{% if success or procedure_created %}
+{% if success or user_created %}
 <div class="alert alert-success auto-hide-alert mb-3" data-hide-after="3000">
-  Послугу успішно створено
+  Користувача успішно створено
 </div>
 {% endif %}
 
 <form
   method="POST"
-  hx-post="{% url 'procedure-create' %}"
+  hx-post="{% url 'user-create' %}"
   hx-target="#createModalBody"
   hx-swap="innerHTML"
-  hx-on="htmx:afterRequest: window.dispatchEvent(new Event('rocedure-created'))"
+  hx-on="htmx:afterRequest: window.dispatchEvent(new Event('user-created'))"
 >
-  {% csrf_token %} 
-  {{ create_procedure_form|crispy }}
+    {% csrf_token %}
+    {{ create_user_form|crispy }}
 
   <div class="modal-footer pb-0">
     <button
@@ -28,3 +28,4 @@
     <button type="submit" class="btn btn-primary">Створити</button>
   </div>
 </form>
+

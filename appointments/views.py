@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.utils import timezone
 
 from appointments.forms import AppointmentForm, MasterFilterForm, StatusFilterForm
@@ -154,6 +155,7 @@ def appointments_create_view(request):
         create_appointment_form = AppointmentForm()
     return render(request, "appointments/partials/create_modal.html", {
         "create_appointment_form": create_appointment_form,
+        "form_action": reverse("appointments-create"),
     })
 
 

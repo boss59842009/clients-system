@@ -1,0 +1,118 @@
+{% load crispy_forms_tags %}
+
+<form method="POST"
+      action="{% url 'user-update' user.pk %}"
+      hx-post="{% url 'user-update' user.pk %}"
+      hx-target="#updateModalBody"
+      hx-swap="innerHTML">
+
+    {% csrf_token %}
+
+    {{ update_user_form.first_name|as_crispy_field }}
+    {{ update_user_form.last_name|as_crispy_field }}
+    {{ update_user_form.phone_number|as_crispy_field }}
+    {{ update_user_form.is_active|as_crispy_field }}
+
+    <div class="mb-3">
+        <label for="{{ update_user_form.password.id_for_label }}" class="form-label">
+            {{ update_user_form.password.label }}
+        </label>
+
+        <div class="input-group">
+            <input
+                type="text"
+                name="{{ update_user_form.password.html_name }}"
+                id="{{ update_user_form.password.id_for_label }}"
+                class="form-control"
+                placeholder="Залиште порожнім, щоб не змінювати"
+                autocomplete="new-password"
+                disabled
+            >
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="generate-password"
+            >
+                Згенерувати
+            </button>
+        </div>
+
+        {% if update_user_form.password.errors %}
+            <div class="text-danger">
+                {{ update_user_form.password.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="modal-footer pb-0">
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+        >
+            Скасувати
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+            Зберегти
+        </button>
+    </div>
+</form>
+
+<script>
+function getRandomChar(chars) {
+    const random = new Uint32Array(1);
+    crypto.getRandomValues(random);
+
+    return chars[random[0] % chars.length];
+}
+
+function generatePassword(length = 12) {
+    const uppercase = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const lowercase = "abcdefghijkmnopqrstuvwxyz";
+    const numbers = "23456789";
+    const symbols = "!@#$%^&*";
+
+    const allChars = uppercase + lowercase + numbers + symbols;
+
+    const passwordChars = [
+        getRandomChar(uppercase),
+        getRandomChar(lowercase),
+        getRandomChar(numbers),
+        getRandomChar(symbols),
+    ];
+
+    while (passwordChars.length < length) {
+        passwordChars.push(getRandomChar(allChars));
+    }
+
+    // Перемішування через crypto.getRandomValues()
+    for (let i = passwordChars.length - 1; i > 0; i--) {
+        const random = new Uint32Array(1);
+        crypto.getRandomValues(random);
+
+        const j = random[0] % (i + 1);
+
+        [passwordChars[i], passwordChars[j]] = [
+            passwordChars[j],
+            passwordChars[i],
+        ];
+    }
+
+    return passwordChars.join("");
+}
+
+document
+    .getElementById("generate-password")
+    .addEventListener("click", function () {
+        const passwordInput = document.getElementById(
+            "{{ update_user_form.password.id_for_label }}"
+        );
+
+        passwordInput.value = generatePassword(12);
+
+        passwordInput.focus();
+        passwordInput.select();
+    });
+</script>

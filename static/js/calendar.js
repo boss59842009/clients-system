@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         slotMinTime: '08:00:00',
         slotMaxTime: '22:00:00',
-        slotDuration: '00:10:00',
+        slotDuration: '00:15:00',
         slotLabelInterval: '01:00',
         slotLabelFormat: {
             hour: '2-digit',
@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', function () {
         businessHours: {
             daysOfWeek: [0, 1, 2, 3, 4, 5, 6], // Пн-Нд
             startTime: '08:00',
-            endTime: '20:00',
+            endTime: '21:00',
         },
-        snapDuration: '00:10:00',
+        snapDuration: '00:15:00',
         selectConstraint: "businessHours",
         eventConstraint: "businessHours",
         displayEventEnd: true,

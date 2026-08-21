@@ -238,3 +238,21 @@ ready(() => {
 //  initUserProfile();
   initSidebar();
 });
+
+
+document.body.addEventListener("htmx:afterSwap", (event) => {
+  event.target.querySelectorAll(".auto-hide-alert").forEach((el) => {
+    if (el.dataset.timerSet) return;
+
+    el.dataset.timerSet = "1";
+
+    const timeout = parseInt(el.dataset.hideAfter || "3000", 10);
+
+    setTimeout(() => {
+      el.style.transition = "opacity 300ms ease";
+      el.style.opacity = "0";
+
+      setTimeout(() => el.remove(), 300);
+    }, timeout);
+  });
+});

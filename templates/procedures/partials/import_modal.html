@@ -1,0 +1,115 @@
+{% load crispy_forms_tags %}
+
+<div class="card shadow-sm mb-2">
+  <div class="card-body p-4">
+      <p class="text-muted">
+          Заповніть Excel-файл відповідно до вказаних колонок.
+          Поля <strong>Назва</strong>, <strong>Вартість</strong> та
+          <strong>Тривалість</strong> є обов'язковими.
+      </p>
+      <ul class="mb-0">
+          <li><strong>Назва</strong> — назва послуги</li>
+          <li><strong>Опис</strong> — опис послуги, необовʼязково</li>
+          <li><strong>Вартість</strong> — вартість послуги в ₴</li>
+          <li><strong>Тривалість</strong> — тривалість послуги в хв</li>
+      </ul>
+
+      <div class="alert alert-info mt-3 mb-0 d-flex align-items-center flex-wrap gap-2" role="alert">
+        <div>
+            <strong>Порада:</strong>
+            використовуйте готовий шаблон,
+            щоб уникнути помилок у назвах колонок та форматах даних.
+        </div>
+        <button type="button" class="btn btn-primary" onclick="generateTemplate()">
+            <i class="bi bi-file-earmark-excel me-1"></i>
+            Завантажити шаблон
+        </button>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body p-4">
+    <form action="{% url 'import-procedures' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-2">
+        <label for="excel_file" class="form-label">
+          Виберіть Excel-файл
+        </label>
+        <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".xlsx,.xls" style="min-height: auto;" required>
+        <div class="form-text">Підтримуються файли форматів .xlsx та .xls</div>
+      </div>
+      <div class="d-flex justify-content-end gap-1">
+        <a href="{% url 'procedures-list' %}" class="btn btn-outline-secondary">
+          Скасувати
+        </a>
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-upload me-1"></i>
+          Імпортувати
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+  document.body.addEventListener("htmx:afterSwap", (event) => {
+    document.querySelectorAll(".auto-hide-alert").forEach((el) => {
+      if (el.dataset.timerSet) return; // щоб не дублювати таймер
+      el.style.transition = "opacity 300ms ease";
+      el.dataset.timerSet = "1";
+
+      const timeout = parseInt(el.dataset.hideAfter || "3000", 10);
+
+      setTimeout(() => {
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 300);
+      }, timeout);
+    });
+  });
+  // Функція для генерації шаблону Excel
+  function generateTemplate() {
+    const data = [
+      [
+        'Назва',
+        'Опис',
+        'Вартість',
+        'Тривалість'
+      ],
+      [
+        'Масаж спини, шиї, голови та рук',
+        'Комплексний масаж спини, шиї, голови та рук для зняття напруги, розслаблення м’язів і відновлення легкості рухів.',
+        '600',
+        '45'
+      ]
+    ];
+
+    // Створюємо книгу
+    const workbook = XLSX.utils.book_new();
+
+    // Створюємо аркуш з даних
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+    // Додаємо аркуш до книги
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      'Послуги'
+    );
+
+    // Встановлюємо ширину колонок
+    worksheet['!cols'] = [
+      { wch: 30 },
+      { wch: 50 },
+      { wch: 10 },
+      { wch: 10 },
+    ];
+
+    // Завантажуємо Excel-файл
+    XLSX.writeFile(
+      workbook,
+      'шаблон_імпорту_послуг.xlsx'
+    );
+  }
+</script>

@@ -6,20 +6,20 @@
     <div class="container-fluid px-3 px-lg-4 py-4">
         <div class="page-heading">
             <div class="page-heading-copy">
-                <span class="page-icon"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></span>
+                <span class="page-icon"><i class="bi bi-card-text" aria-hidden="true"></i></span>
                 <div>
                     <h1 class="h3 mb-1">Інформація про послугу</h1>
                 </div>
             </div>
             <div class="heading-actions">
-                <a class="btn btn-outline-secondary btn" href="{% url "masters-list" %}">
+                <a class="btn btn-outline-secondary btn" href="{% url 'procedures-list' %}">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
                 Назад до послуг</a>
             </div>
         </div>
 
         <section class="row g-3">
-            <div class="col-12 col-xl-4">
+            <div class="col-12 col-xl-6">
                 <div class="panel h-100 text-center profile-card">
                     <div class="profile-hero d-flex flex-column align-items-center text-center">
                         <div class="d-flex justify-content-center gap-2 mt-2">
@@ -47,8 +47,14 @@
 
                     </div>
                     <div class="info-list mt-4 text-start">
-                        <div><span>Опис</span><strong>{{ procedure.description }}</strong></div>
-                        <div><span>Ціна</span><strong><span class="badge text-bg-success">{{ procedure.price }} ₴</span></strong></div>
+                        <div><span>Опис</span><strong>
+                            {% if procedure.description %}
+                                {{ procedure.description }}
+                            {% else %}
+                                відсутній
+                            {% endif %}
+                            </strong></div>
+                        <div><span>Вартість</span><strong><span class="badge text-bg-success">{{ procedure.price }} ₴</span></strong></div>
                         <div><span>Тривалість</span><strong><span class="badge text-bg-secondary">{{ procedure.duration }} хв</span></strong></div>
                         <div><span>Оновлено</span><strong>{{ procedure.updated_at|date:"d.m.Y" }}</strong></div>
                         <div><span>Статус</span>
@@ -63,16 +69,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-xl-8">
+            <div class="col-12 col-xl-6">
                 <div class="panel">
                     <div class="panel-header">
                         <div>
                             <h2 class="h5 mb-1 section-title"><i class="bi bi-clock-history"
                                                                  aria-hidden="true"></i><span>Майстри цієї послуги</span>
                             </h2>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-outline-success me-1">Додати майстра</button>
                         </div>
                     </div>
                     <div class="activity-list flex-grow-1 overflow-auto px-3" id="mastersList">

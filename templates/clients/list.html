@@ -90,10 +90,19 @@
                     {% if request.GET.q %}
                         <a href="{{ request.path }}" class="btn btn-danger btn-lg"><i class="bi bi-x-lg"></i></a>
                     {% endif %}
-                    <a class="btn btn-outline-secondary btn-lg" href="#">
+                    <a class="btn btn-outline-secondary btn-lg" href="#"
+                        hx-get="{% url 'import-clients' %}"
+                        hx-target="#importModalBody"
+                        hx-trigger="click"
+                        data-bs-toggle="modal"
+                        data-bs-target="#importClientModal">
+                        <i class="bi bi-upload" aria-hidden="true"></i> 
+                        Імпорт
+                    </a>
+                    <!-- <a class="btn btn-outline-secondary btn-lg" href="#">
                         <i class="bi bi-download" aria-hidden="true"></i> 
                         Експорт
-                    </a>
+                    </a> -->
                     <a class="btn-lg btn-success btn text-nowrap"
                         hx-get="{% url 'clients-create' %}"
                         hx-target="#createModalBody"
@@ -177,7 +186,7 @@
                         {# PREV #}
                         <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
                             <a class="page-link"
-                               href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&search={{ request.GET.q }}{% endif %}{% else %}#{% endif %}">
+                               href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% else %}#{% endif %}">
                                 «
                             </a>
                         </li>
@@ -186,7 +195,7 @@
                         {% if page_obj.number > 3 %}
                         <li class="page-item">
                             <a class="page-link"
-                               href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                               href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                                 1
                             </a>
                         </li>
@@ -302,15 +311,120 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="modal fade" id="deleteClientModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title">Підтвердити видалення</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Редагувати клієнта</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
             </div>
-                <div class="modal-body" id="deleteModalBody">
+
+            <div class="modal-body"
+                 id="deleteModalBody">
                 <!-- HTMX сюди вставить форму -->
-                </div>
             </div>
+
         </div>
     </div>
 </div>
+<!--IMPORT CLIENT MODAL-->
+<div class="modal fade" id="importClientModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Імпорт клієнтів
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+            </div>
+
+            <div
+                class="modal-body"
+                id="importModalBody"
+            >
+                {% if import_result %}
+
+                    <div
+                        class="
+                            alert
+                            {% if import_result.errors %}
+                                {% if import_result.imported %}
+                                    alert-warning
+                                {% else %}
+                                    alert-danger
+                                {% endif %}
+                            {% else %}
+                                alert-success
+                            {% endif %}
+                        "
+                        data-import-result
+                    >
+
+                        <div class="fw-semibold mb-2">
+                            {{ import_result.summary }}
+                        </div>
+
+                        {% if import_result.total is not None %}
+                        <div class="mb-2">
+                            Усього:
+                            <strong>
+                                {{ import_result.total|default:0 }}
+                            </strong>
+
+                            · Додано:
+                            <strong>
+                                {{ import_result.imported|default:0 }}
+                            </strong>
+
+                            · Пропущено:
+                            <strong>
+                                {{ import_result.skipped|default:0 }}
+                            </strong>
+                        </div>
+                        {% endif %}
+
+                        {% if import_result.errors %}
+                            <hr>
+
+                            <div class="fw-semibold mb-2">
+                                Помилки:
+                            </div>
+
+                            <ul class="mb-0">
+                                {% for error in import_result.errors %}
+                                    <li>
+                                        {{ error }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+                {% if not import_result %}
+                    <!-- HTMX завантажить import_modal.html -->
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% if import_result %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modalElement = document.getElementById("importClientModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    modal.show();
+});
+</script>
+{% endif %}
 {% endblock %}

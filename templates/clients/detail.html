@@ -48,12 +48,18 @@
                     </div>
                     <div class="info-list mt-4 text-start">
                         <div><span>Номер телефону</span><strong>{{ client.phone_number }}</strong></div>
-                        <div><span>Телеграм</span><strong></strong>
+                        <div><span>Телеграм</span><strong>
                             {% if client.tg %}@{{ client.tg }}{% else %}-{% endif %}
-                        </div>
+                        </strong></div>
                         <div><span>Стать</span><strong>{{ client.get_gender_display }}</strong></div>
                         <div><span>Дата народження</span><strong>{{ client.birthdate|date:"d.m.Y" }}</strong></div>
-                        <div><span>Вік</span><strong></strong></div>
+                        <div><span>Вік</span><strong>
+                            {% if age is not None %}
+                                {{ age }} років
+                            {% else %}
+                                Вік не вказано
+                            {% endif %}
+                        </strong></div>
                         <div><span>Оновлено</span><strong>{{ client.updated_at|date:"d.m.Y" }}</strong></div>
                     </div>
                 </div>
@@ -65,13 +71,13 @@
                             <h2 class="h5 mb-1 section-title"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Останні записи</span></h2>
                         </div>
                         <div>
-                            <a class="btn btn-success btn-sm text-nowrap"
-                                hx-get="{% url 'appointments-create' %}"
+                            <a class="btn btn-success btn-sm text-nowrap "
+                                hx-get="{% url 'client-appointment-create' client.pk %}"
                                 hx-target="#createModalBody"
                                 hx-trigger="click"
                                 data-bs-toggle="modal"
                                 data-bs-target="#createAppointmentModal">
-                                <i class="bi bi-calendar-plus" aria-hidden="true"></i>Створити запис
+                                <i class="bi bi-calendar-plus-fill" aria-hidden="true"></i>Створити запис
                             </a>
                         </div>
                     </div>
@@ -80,8 +86,11 @@
                         <div class="activity-item d-flex align-items-start justify-content-between">
 
                             <div class="d-flex align-items-start">
-                                <span class="activity-dot bg-primary me-3"></span>
-
+                                {% if a.status == 'booked' %}
+                                    <span class="activity-dot bg-primary me-3"></span>
+                                {% elif a.status == 'done' %}
+                                    <span class="activity-dot bg-success me-3"></span>
+                                {% endif %}
                                 <div>
                                     <h5 class="mb-1 fw-semibold">{{ a.start_at }}</h5>
                                     <p class="mb-1 fw-semibold">{{ a.procedure.title }}</p>
@@ -153,6 +162,25 @@
                 <div class="modal-body" id="deleteModalBody">
                 <!-- HTMX сюди вставить форму -->
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CREATE APPOINTMENT MODAL -->
+<div class="modal fade" id="createAppointmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 class="modal-title h5">Створити запис</h2>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="createModalBody">
+                <!-- HTMX вставить форму -->
             </div>
         </div>
     </div>

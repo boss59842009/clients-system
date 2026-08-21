@@ -27,52 +27,52 @@
                   <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
                 </div>
                 <div class="metric-value">{{ all_appointments_count }}</div>
-                <div class="metric-meta">
+                <!-- <div class="metric-meta">
                   <span class="text-success">+12.5%</span>
                   <span>from last month</span>
-                </div>
+                </div> -->
               </article>
             </div>
     
             <div class="col-12 col-sm-6 col-xl-3">
               <article class="metric-card metric-success">
                 <div class="metric-top">
-                  <span class="metric-label">Всього записів сьогодні</span>
+                  <span class="metric-label">Всього записів на сьогодні</span>
                   <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
                 </div>
                 <div class="metric-value">{{ today_appointments_count }}</div>
-                <div class="metric-meta">
+                <!-- <div class="metric-meta">
                   <span class="text-success">+8.2%</span>
                   <span>new orders</span>
-                </div>
+                </div> -->
               </article>
             </div>
     
             <div class="col-12 col-sm-6 col-xl-3">
               <article class="metric-card metric-warning">
                 <div class="metric-top">
-                  <span class="metric-label">Всього записів цього тижня</span>
+                  <span class="metric-label">Всього записів на цей тиждень</span>
                   <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
                 </div>
                 <div class="metric-value">{{ week_appointments_count }}</div>
-                <div class="metric-meta">
+                <!-- <div class="metric-meta">
                   <span class="text-success">+5.1%</span>
                   <span>active users</span>
-                </div>
+                </div> -->
               </article>
             </div>
     
             <div class="col-12 col-sm-6 col-xl-3">
               <article class="metric-card metric-danger">
                 <div class="metric-top">
-                  <span class="metric-label">Всього відмінено</span>
+                  <span class="metric-label">Всього відмінено записів</span>
                   <span class="metric-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
                 </div>
                 <div class="metric-value">{{ canceled_appointments_count }}</div>
-                <div class="metric-meta">
+                <!-- <div class="metric-meta">
                   <span class="text-danger">3 urgent</span>
                   <span>need review</span>
-                </div>
+                </div> -->
               </article>
             </div>
           </section>
@@ -110,10 +110,10 @@
                         {% if request.GET.q %}
                             <a href="{{ request.path }}" class="btn btn-danger btn-lg"><i class="bi bi-x-lg"></i></a>
                         {% endif %}
-                        <a class="btn btn-outline-secondary btn-lg" href="#">
+                        <!-- <a class="btn btn-outline-secondary btn-lg" href="#">
                         <i class="bi bi-download" aria-hidden="true"></i>
                         Експорт
-                        </a>
+                        </a> -->
                     </div>
                 </div>
                 

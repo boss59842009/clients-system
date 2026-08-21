@@ -29,8 +29,11 @@ class AppointmentForm(forms.ModelForm):
             "comment": forms.Textarea(attrs={"rows": 3, "placeholder": "Введіть коментар", "class": "form-control"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, client=None, **kwargs):
         super().__init__(*args, **kwargs)
+        if client:
+            self.fields["client"].initial = client
+            self.fields["client"].disabled = True
 
         self.fields["procedure"].queryset = ProcedureModel.objects.none()
 

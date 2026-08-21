@@ -42,9 +42,9 @@ class ProcedureForm(forms.ModelForm):
 
         widgets = {
             "title": forms.TextInput(attrs={"placeholder": "Назва"}),
-            "description": forms.Textarea(attrs={"placeholder": "Опис"}),
-            "price": forms.NumberInput(attrs={"placeholder": "Ціна в ₴" }),
-            "duration": forms.NumberInput(attrs={"placeholder": "Тривалість в зв" }),
+            "description": forms.Textarea(attrs={"placeholder": "Опис", "rows": 4}),
+            "price": forms.NumberInput(attrs={"placeholder": "Вартість в ₴" }),
+            "duration": forms.NumberInput(attrs={"placeholder": "Тривалість в хв" }),
         }
     
     def __init__(self, *args, **kwargs):

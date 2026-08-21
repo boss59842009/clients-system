@@ -17,7 +17,11 @@
                     <h1 class="h3 mb-1">Календар записів</h1>
                 </div>
             </div>
-            <div class="heading-actions"></div>
+            <div class="heading-actions">
+                <a class="btn btn-outline-secondary btn" href="{% url 'appointments-list' %}">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                Назад до записів</a>
+            </div>
         </div>
 
         <section class="panel mt-3">
@@ -34,11 +38,11 @@
                     <div class="col-md-4">
                         <a class="btn btn-success btn-lg text-nowrap "
                         hx-get="{% url 'appointments-create' %}"
-                        hx-target="#createModalBody"
+                        hx-target="#createAppointmentModalBody"
                         hx-trigger="click"
                         data-bs-toggle="modal"
                         data-bs-target="#createAppointmentModal">
-                        <i class="bi bi-calendar-plus" aria-hidden="true"></i>Створити запис
+                        <i class="bi bi-calendar-plus-fill" aria-hidden="true"></i>Створити запис
                     </a>
                     </div>
                 </div>
@@ -171,7 +175,7 @@
                         data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body" id="createModalBody">
+            <div class="modal-body" id="createAppointmentModalBody">
                 <!-- HTMX вставить форму -->
             </div>
         </div>
