@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="adminHMD error page">
+  <title>404 Page Not Found | adminHMD</title>
+
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/bootstrap-icons/bootstrap-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="auth-body">
+  <button class="icon-button theme-toggle auth-theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
+    <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
+  </button>
+  <main class="error-page">
+    <section class="error-card">
+      <a class="auth-brand justify-content-center" href="{% url 'appointments-list' %}"><span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span><span><strong>Адмін панель</strong><small>Помилка</small></span></a>
+      <img class="error-illustration" src="{% static 'images/svg/404.svg' %}" alt="Page not found illustration">
+      <div class="error-code">404</div>
+      <h1 class="h3 mb-2">Сторінку не знайдено</h1>
+      <p class="text-muted mb-4">Сторінка, яку ви шукаєте, не існує або була переміщена.</p>
+      <div class="d-flex flex-wrap justify-content-center gap-2"><a class="btn btn-primary" href="{% url 'appointments-list' %}"><i class="bi bi-speedometer2" aria-hidden="true"></i> На головну</a></div>
+    </section>
+  </main>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/main_fixed.js' %}"></script>
+</body>
+</html>

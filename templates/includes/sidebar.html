@@ -2,7 +2,7 @@
 <!-- Left Navbar -->
 <aside class="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
     <div class="sidebar-header">
-        <a class="brand-mark" href="{% url 'index' %}" aria-label="adminHMD dashboard">
+        <a class="brand-mark" href="{% url 'appointments-list' %}" aria-label="adminHMD dashboard">
             <span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span>
             <span class="brand-copy">
                 <span class="brand-title">Адмінка</span>
@@ -12,10 +12,10 @@
     </div>
 
     <nav class="sidebar-nav">
-        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
+        <!-- <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="">
             <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
             <span class="nav-text">Головна</span>
-        </a>
+        </a> -->
         <a class="nav-link {% if request.resolver_match.url_name == 'appointments-list' %}active{% endif %}" href="{% url 'appointments-list' %}">
             <span class="nav-icon"><i class="bi bi-calendar-plus" aria-hidden="true"></i></span>
             <span class="nav-text">Записи</span>

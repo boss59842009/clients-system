@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 
 from celery import shared_task
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from appointments.models import AppointmentModel
@@ -27,6 +28,25 @@ def done_appointments_per_day():
         yesterday,
     )
 
+@shared_task
+def clear_old_appointments():
+    today = timezone.localdate()
+    target_month = today - relativedelta(months=2)
+
+    start_date = target_month.replace(day=1)
+    end_date = start_date + relativedelta(months=1)
+
+    deleted_count, _ = AppointmentModel.objects.filter(
+        start_at__date__gte=start_date,
+        start_at__date__lt=end_date,
+    ).delete()
+
+    logger.info(
+        "Видалено %s записів за період %s - %s",
+        deleted_count,
+        start_date,
+        end_date - timedelta(days=1),
+    )
 
 
 

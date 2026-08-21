@@ -31,20 +31,20 @@ def index_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("index")
+        return redirect("appointments-list")
     if request.method == "POST":
         login_form = PhoneAuthenticationForm(request, data=request.POST)
 
         if login_form.is_valid():
             user = login_form.get_user()
             if not user.is_active:
-                return redirect("index")
+                return redirect("appointments-list")
             login(request, user)
 
             if not login_form.cleaned_data.get("remember_me"):
                 request.session.set_expiry(0)
 
-            return redirect("index")
+            return redirect("appointments-list")
 
         return render(
             request,

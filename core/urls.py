@@ -20,14 +20,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 from auth_system.views import index_view
 
+handler404 = "core.views.error_404"
+handler500 = "core.views.error_500"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", index_view, name="index"),
+    # path("", index_view, name="index"),
     path('auth/users/', include("auth_system.urls")),
     path('clients/', include("clients.urls")),
     path('', include("procedures.urls")),
     path('appointments/', include("appointments.urls")),
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
+
+

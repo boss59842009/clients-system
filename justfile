@@ -19,9 +19,12 @@ beat-worker:
     celery -A core beat -l info
 
 # Створення періодичних задач
-setup-tasks:
-    python manage.py migrate
+setup-periodic-tasks:
     python manage.py setup_periodic_tasks
+
+# Видалення періодичних задач
+clear-periodic-tasks:
+    python manage.py clear_periodic_tasks
 
 # Створення міграції
 migrate:
